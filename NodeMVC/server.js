@@ -11,7 +11,7 @@ var server = (function () {
 		if (req.url === '/favicon.ico') return;
 		var pathname = url.parse(req.url).pathname;
 		console.log("Request for " + pathname + " received.");
-		controller.route(req, res, viewData);
+		controller.handle(req, res, viewData);
 	};
 	
 	// this can be extended to be called multiple times with different controllers?

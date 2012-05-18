@@ -8,7 +8,7 @@
 var controller = function(spec) {
     var that = {};
 	var url = require("url");
-    var router = function(req, res, viewData) {
+    var handle = function(req, res, viewData) {
 		var pathname = url.parse(req.url).pathname;
 		// once the controller finds the appropriate function from the dev 
 		// defined model files, then we can execute the function, or run 
@@ -22,8 +22,8 @@ var controller = function(spec) {
 			res.end();
 		}
 	};
-	that.route = router
+	that.handle = handle
     return that;
 };
 
-module.exports = controller;
+module.exports = handle;
