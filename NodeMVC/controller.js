@@ -1,29 +1,44 @@
-// NodeMVC controller module - can be inherited from using functional inheritance?
-// A controller has a configurable router and references a view object.
-// Need to allow devs to be able to add functions. When the controller is created
-// it will loop through all of its functions and tie these to the view object.
-// the configured router will expect that certain functions exist.
-// the developer defined functions may or may not employ the model. 
 
+// NodeMVC controller module that the developer will use to inherit from.
 var controller = function(spec) {
-    var that = {};
-	var url = require("url");
-    var handler = function(req, res, viewData) {
-		var pathname = url.parse(req.url).pathname;
-		// once the controller finds the appropriate function from the dev 
-		// defined model files, then we can execute the function, or run 
-		// the function as a child processes. This can either be done in 
-		// this file directly or it can be done in a separate file ???
-		if (typeof viewData[pathname] === 'function') {
-			viewData[pathname](res);
-		} else {
-			res.writeHead(404, {"Content-Type": "text/plain"});
-			res.write("404 Not found");
-			res.end();
-		}
+		
+	var that = {};
+		
+	// This is the part that will require the html parser object
+	// var viewfunc = require("parsingModuleOrWhateverItsCalled");
+		
+	// 'viewfunc' below is just a stub for this unfinished functionality.
+	var viewfunc = function () { return 'final product from the parser ' 
+	+ ' is the default.html. This could be a file explains what it do'; };
+		
+	// this could be what is called if a developer does not define a function
+	var defaultFunction = function() {
+		//viewData["defaultFunc"] = "";
+		return viewfunc();
 	};
-	that.handle = handler
-    return that;
+	
+	// the developer returns this object in their defined functions --> return view()
+	that.view = function () {
+		// there needs to be some way of knowing the name of the function 
+		// which called this method. Does javascript have Reflection or something?
+		// otherwise, we'll need to require view('nameOfCallingFunction') to let
+		// the parsing class know which html file it needs to process and return.
+		return viewfunc();
+	};
+	
+	that.defaultFunc = defaultFunction;
+	return that;
 };
-
+	
 module.exports = controller;
+
+// and so this is what it would look like when a dev wants to create a controller
+//var controllerHello = function(spec) {
+
+	//var that = require('controller');
+	//that.hello = function(strName) {
+		//viewData["defaultFunc"] = strName;
+		//return that.view(); <-- This calls the parser object in the base controller class
+	//};
+//};
+//module.exports = controllerHello; <-- This is a requirement
