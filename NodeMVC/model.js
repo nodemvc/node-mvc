@@ -1,4 +1,4 @@
-// NodeMVC model extension ???
+// NodeMVC model extension
 
 var childProcess = require('child_process');
 
