@@ -26,4 +26,4 @@ var controller = function(spec) {
     return that;
 };
 
-module.exports = handle;
+module.exports = controller;
