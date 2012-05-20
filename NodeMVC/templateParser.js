@@ -24,14 +24,16 @@ var templateParser = (function () {
 			var newHTMLContent = "";	
 			var lines = content.split('\n');;
 			
-			// Regular expression matching the pattern <% (pattern) %>.
+			// The regular expression matches the pattern "<% (any alphanumeric 
+			// and underscore character one or more times) %>".
 			// This regular expression stores whatever pattern is matched inside the 
-			// parenthesis is in the result variable inside the for loop. The result 
+			// parenthesis in the result object that is returned when the regular 
+			// expression is executed on a string. The result 
 			// object has the following properties:
-			// 		0: matched string
-			//		1: whatever is matched inside the parentheses
+			// 		0: contains the matched string
+			//		1: contains whatever is matched inside the parentheses
 			//		input: the input line
-			//		index: index of the matched string
+			//		index: index of the matched string in the original input string
 			var parse_line = /<%\s*([a-z0-9_]+)\s*%>/gi;
 			var i;
 			for(i = 0; i < lines.length - 1; i += 1) {
@@ -53,11 +55,12 @@ var templateParser = (function () {
 					newHTMLContent += lines[i] + '\n';
 				}
 			}
+			console.log("new HTML: " + newHTMLContent);
 			return newHTMLContent;
 		}
 		catch (err) {
 			console.log(err);
-			return err;
+			return 'TemplateParser: Trouble rendering HTML file. Check the log files for more information.';
 		}
 	}
 	return that;
