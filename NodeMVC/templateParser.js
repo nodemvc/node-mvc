@@ -1,58 +1,67 @@
 var fs = require('fs');
 
-var viewData = {
-	'hello':'<b>Hello, World!</b>\n',
-	'jello':' This is an Obvious Simulation \n'
-}
+//var viewData = {
+//	'hello':function() { return '<b>Hello, World!</b>'; },
+//	'jello':function() { return ' This is an Obvious Simulation'; }
+//}
 
-// Template Parser assumes that it has viewData in scope
-var templateParser = (
-
-function  () {
+// The template parser object has one method: 
+//
+//		render(htmlDocument) 
+//
+// where htmlDocument is a string representing the name of the HTML document. The method 
+// parses the HTML document for special markups <% nameOfObject %>. For each
+// markup it finds, it'll replace the markup with the return value of nameOfObject, 
+// whatever that may be.
+var templateParser = (function () {
 	var that = {};
-	
-	var helper = function() {
-	
-	}
-	
+
+	// Parses html document for special markups and grabs those markups requested via 
+	// accessing the html document.
 	that.render = function(htmlFileName) {
 		try {
 			var content = fs.readFileSync(htmlFileName, 'ascii');
-			var newContent = "";	
+			var newHTMLContent = "";	
 			var lines = content.split('\n');;
 			
-			// <% myObject %>
-			var i;
-			
-			// used global because there could be more than one special tag on one line
+			// Regular expression matching the pattern <% (pattern) %>.
+			// This regular expression stores whatever pattern is matched inside the 
+			// parenthesis is in the result variable inside the for loop. The result 
+			// object has the following properties:
+			// 		0: matched string
+			//		1: whatever is matched inside the parentheses
+			//		input: the input line
+			//		index: index of the matched string
 			var parse_line = /<%\s*([a-z0-9_]+)\s*%>/gi;
-			for( i = 0; i < lines.length - 1; i += 1) {
+			var i;
+			for(i = 0; i < lines.length - 1; i += 1) {
 				var result = parse_line.exec(lines[i]);
+				
+				// Because of the global modifier on the regular expression, the regular
+				// expression will return a new match on the same string each time it is
+				// executed until there aren't anymore matches at which point it'll 
+				// return a falsy value.
 				if (result) {
-					var matchedString = result[1];
-					
-					var newLine = viewData[matchedString];
-					newContent += newLine;
+					var line = lines[i];
+					do {
+						line = line.replace(result[0], viewData[result[1]]());
+						result = parse_line.exec(lines[i]);
+					} while (result);
+					newHTMLContent += line + '\n';
 				} 
 				else {
-					newContent += lines[i] + '\n';
+					newHTMLContent += lines[i] + '\n';
 				}
 			}
-			
-			console.log(content);
-			console.log(newContent); 
-			return newContent;
+			console.log(newHTMLContent);
+			return newHTMLContent;
 		}
 		catch (err) {
-			console.log(err + ': File not found');
-			return 'File Not Found';
+			console.log(err);
+			return err;
 		}
 	}
-	
-	
 	return that;
-}
-
-)();
+})();
 
 module.exports = templateParser;
