@@ -4,9 +4,4 @@ var controller = require("./controller")();
 var server = require("./server");
 var model = require("./model");
 
-var viewData = {};
-viewData["/"] = model.runWorker;
-viewData["/runWorker"] = model.runWorker;
-viewData["/runWorkerAsync"] = model.runWorkerAsync;
-
-server.run(controller, viewData, 8888);
+server.run(controller, 8888);
