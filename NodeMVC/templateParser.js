@@ -53,7 +53,6 @@ var templateParser = (function () {
 					newHTMLContent += lines[i] + '\n';
 				}
 			}
-			console.log(newHTMLContent);
 			return newHTMLContent;
 		}
 		catch (err) {
