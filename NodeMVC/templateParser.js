@@ -1,9 +1,9 @@
 var fs = require('fs');
 
-//var viewData = {
-//	'hello':function() { return '<b>Hello, World!</b>'; },
-//	'jello':function() { return ' This is an Obvious Simulation'; }
-//}
+var viewData = {
+	'hello':function() { return '<b>Hello, World!</b>'; },
+	'jello':function() { return ' This is an Obvious Simulation'; }
+}
 
 // The template parser object has one method: 
 //
@@ -55,7 +55,8 @@ var templateParser = (function () {
 					newHTMLContent += lines[i] + '\n';
 				}
 			}
-			console.log("new HTML: " + newHTMLContent);
+			console.log("template:\n:" + content);
+			console.log("new HTML:\n" + newHTMLContent);
 			return newHTMLContent;
 		}
 		catch (err) {
