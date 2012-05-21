@@ -5,16 +5,17 @@ var controller = function(spec) {
 	var that = {};
 		
 	// This is the part that will require the html parser object
-	// var viewfunc = require("parsingModuleOrWhateverItsCalled");
-		
+	var parserObj = require("./templateParser");
+	
+	// TODO: Remove the 3 lines below at some point.
 	// 'viewfunc' below is just a stub for this unfinished functionality.
-	var viewfunc = function () { return 'final product from the parser ' 
-	+ ' is the default.html. This could be a file explains what it do'; };
+	// var viewfunc = function () { return 'final product from the parser ' 
+	// + ' is the default.html. This could be a file explains what it do'; };
 		
 	// this could be what is called if a developer does not define a function
 	var defaultFunction = function() {
 		//viewData["defaultFunc"] = "";
-		return viewfunc();
+		return parserObj.render("./example.html");
 	};
 	
 	// the developer returns this object in their defined functions --> return view()
@@ -23,7 +24,7 @@ var controller = function(spec) {
 		// which called this method. Does javascript have Reflection or something?
 		// otherwise, we'll need to require view('nameOfCallingFunction') to let
 		// the parsing class know which html file it needs to process and return.
-		return viewfunc();
+		return parserObj.render("still need to work this out");
 	};
 	
 	that.defaultFunc = defaultFunction;
