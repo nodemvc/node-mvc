@@ -12,9 +12,14 @@ var controller = function(spec) {
 	// var viewfunc = function () { return 'final product from the parser ' 
 	// + ' is the default.html. This could be a file explains what it do'; };
 		
-	// this could be what is called if a developer does not define a function
-	var defaultFunction = function() {
-		//viewData["defaultFunc"] = "";
+	// this is the gerenal function that gets called by the server / router
+	var handleReq = function(req, res) {
+		//viewData[""] = "";
+		// the actual function is called here
+		// if a model is specified as a parameter, then the params for the model should be set.
+		// the view will be returned and then the res properties can be set according to this
+		// does the server have an updated copy of the view or is it the same.
+		// so then is the view saved in memory in the controller here?
 		return parserObj.render("./example.html");
 	};
 	
@@ -27,7 +32,7 @@ var controller = function(spec) {
 		return parserObj.render("still need to work this out");
 	};
 	
-	that.defaultFunc = defaultFunction;
+	that.handleRequest = handleReq;
 	return that;
 };
 	
