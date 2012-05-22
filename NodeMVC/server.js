@@ -3,7 +3,7 @@ var controllers = [];
 var http = require("http");
 var url = require("url");
 var cluster = require('cluster');
-var fs = require("fs");		// TODO is this needed?
+var fs = require("fs");		// TODO is this needed? - Yes probably for writing to the log file
 var path = require("path");	// TODO is this needed?
 var crypto = require("crypto"); // for cache control
 var net = require('net');	// TODO is this needed?
@@ -20,7 +20,6 @@ var log = function (req, res, bytesSent) {
 	writeStreamObj.end(serverLog);
 };
 
-
 // NodeMVC server module
 var server = (function () {	
 	var handleRequest = function(request, response) {
@@ -34,6 +33,9 @@ var server = (function () {
 			response.writeHeader(501, {"Content-Type":"text/plain"});
 			response.end();
 			return;	// TODO is this return statement needed here?
+			// It probably is if you dont have anything else to do. or dont want
+			// to execute any code below. Calling resp.end() does not stop code 
+			// execution if thats what your getting at.
 		}
 		
 		var writeDataFlag = (method === "HEAD") ? false : true;
@@ -42,6 +44,11 @@ var server = (function () {
 		console.log("Request for " + pathname + " received.");
 		// TODO Do we still check to see if the pathname is valid?  Or is this handled
 		// by the if statement:  "if (typeof controllers[0].defaultFunc === 'function')"
+		// This will be handled by the router and the controller. Router will tell if the 
+		// pathname routes to a specific controller and function, and then the controller
+		// will let the router know if the params mapped correctly inside. If an error 
+		// occurs, the the router will be notified and the router should notify the server.
+		// Then the server should know how to respond.
 		
 		
 		// cookie - set and maintain a session-id if the client supports cookies
@@ -53,6 +60,7 @@ var server = (function () {
 		head["Set-Cookie"] = SID;    
 		//console.log("SID=" + SID);
 		// TODO Add support for other cookie version(s)
+		// remember that the cookie2 RFC itself has been depricated
 		
 		// here's where the router comes into play for finding the appropriate controller 
 		// and invoking the appropriate function for a working demonstration I will 
@@ -74,6 +82,8 @@ var server = (function () {
 				
 				// TODO - How do we get the resource statistics? (needed for cache control)
 				// TODO - How do we determine the content type?
+				// I think that these items will be handled by the controller and view template
+				// reference the functional spec and we will hopefully have this all worked out there
 				
 				// Finish up the response
 				if(writeDataFlag) {
@@ -89,7 +99,6 @@ var server = (function () {
 		}
 	};
 	
-	// this can be extended to be called multiple times with different controllers?
 	// currently takes a controller and port number.
 	var runServer = function (cntrlr, port) {
 	
