@@ -8,6 +8,18 @@ var path = require("path");	// TODO is this needed?
 var crypto = require("crypto"); // for cache control
 var net = require('net');	// TODO is this needed?
 
+// ******* In case you dont have the logging part from HW1. Otherwise, you can delete this code *******
+var log = function (req, res, bytesSent) {
+	
+	// e.g. 127.0.0.1 RFC 1413 frank [10/Oct/2000:13:55:36 -0700] "GET /apache_pb.gif HTTP/1.0" 200 2326
+	var serverLog = req.connection.remoteAddress + ' - - ' 
+	+ '[' + new Date().toUTCString() + ']' + ' "' + req.method + ' ' 
+	+ req.url + ' HTTP/' + req.httpVersion + '" ' + res.statusCode + ' ' + bytesSent + CRLF;
+
+	var writeStreamObj = fs.createWriteStream('log.txt', {'flags': 'a'}); // <-- {'flags': 'a'} will append
+	writeStreamObj.end(serverLog);
+};
+
 
 // NodeMVC server module
 var server = (function () {	
