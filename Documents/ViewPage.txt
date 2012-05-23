@@ -1,0 +1,63 @@
+using System;
+
+namespace System.Web.Mvc
+{
+    // Summary:
+    //     Represents the information that is required in order to render a strongly
+    //     typed view as a Web Forms page.
+    //
+    // Type parameters:
+    //   TModel:
+    //     The type of the model.
+    public class ViewPage<TModel> : ViewPage
+    {
+        // Summary:
+        //     Initializes a new instance of the System.Web.Mvc.ViewPage<TModel> class.
+        public ViewPage();
+
+        // Summary:
+        //     Gets or sets the System.Web.Mvc.AjaxHelper<TModel> object that supports rendering
+        //     HTML in Ajax scenarios.
+        //
+        // Returns:
+        //     The Ajax helper object that is associated with the view.
+        public AjaxHelper<TModel> Ajax { get; set; }
+        //
+        // Summary:
+        //     Gets or sets the System.Web.Mvc.HtmlHelper object that provides support for
+        //     rendering elements.
+        //
+        // Returns:
+        //     The HTML helper object that is associated with the view.
+        public HtmlHelper<TModel> Html { get; set; }
+        //
+        // Summary:
+        //     Gets the System.Web.Mvc.ViewDataDictionary<TModel>.Model property of the
+        //     associated System.Web.Mvc.ViewDataDictionary<TModel> object.
+        //
+        // Returns:
+        //     A reference to the data model.
+        public TModel Model { get; }
+        //
+        // Summary:
+        //     Gets or sets a dictionary that contains data to pass between the controller
+        //     and the view.
+        //
+        // Returns:
+        //     A dictionary that contains data to pass between the controller and the view.
+        public ViewDataDictionary<TModel> ViewData { get; set; }
+
+        // Summary:
+        //     Instantiates and initializes the System.Web.Mvc.ViewPage<TModel>.Ajax and
+        //     System.Web.Mvc.ViewPage<TModel>.Html properties.
+        public override void InitHelpers();
+        //
+        // Summary:
+        //     Sets the view data dictionary for the associated view.
+        //
+        // Parameters:
+        //   viewData:
+        //     A dictionary of data to pass to the view.
+        protected override void SetViewData(ViewDataDictionary viewData);
+    }
+}
