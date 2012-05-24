@@ -12,19 +12,16 @@ var model = function () {
 				// for all query params, see if there is a coresponding member, otherwise throw
 				// an error back to the controller, so that the controller can notify the server
 				for(indx in query) {
-					if (this[indx]) { this[indx] = query[indx];}
+					if (that[indx] !== "undefined") { that[indx] = query[indx];}
 				}
 		} catch (e) {
 			// need to define the error message here
 			throw e;
 		}
-	
 	};
 	
 	that.setParameters = setParams;
-
 	return that;
-
 };
 
 module.exports = model;
