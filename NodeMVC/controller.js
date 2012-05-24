@@ -16,36 +16,43 @@ var controller = function(spec) {
 			  '<input type="submit" value="Submit" /> </form>'};
 		
 	// this is the gerenal function that gets called by the server / router
-	var handleReq = function(req, res, action) {
+	var handleReq = function(request, response, action) {
 	
-		var request = req;
-		var response = res;
 		var url_parts = url.parse(request.url, true);
 		response.setHeader("Content-Type", "text/html");
-		// first you will need to test for a model
-		if (typeof action.model === "function"){
-		var modelParam = action.model();
-			modelParam.setParameters(url_parts.query)
-			// action returns the completed view 
+		
+		// See if a model has been defined for the action
+		if (typeof action.model === "function") {
+			// create the model object to be passed to the action as a parameter
+			var modelParam = action.model();
+			try {
+				modelParam.setParameters(url_parts.query)
+			} catch (e) {
+				// the parameters could not be mapped to the model
+				response.statusCode = 200; // What status code to put here?
+				response.write('Parameters could not be mapped to the model');
+				response.end();
+			}
+			response.statusCode = 200;
+			// call the action passing in the view - this is what to write
 			response.write(action(modelParam));
+			response.end();
 		} else {
-			// below is calling a stub
-			response.write(viewfunc());
+			// call the action - this is what to write
+			response.write(action());
+			response.statusCode = 200; // What status code to put here	
+			response.end();
 		}
-		
-		
-		response.statusCode = 200;
-		response.end();
 	};
 	
 	// the developer returns this object in their defined functions --> return view()
 	that.view = function () {
-		return viewfunc();
 		// there needs to be some way of knowing the name of the function 
 		// which called this method. Does javascript have Reflection or something?
 		// otherwise, we'll need to require view('nameOfCallingFunction') to let
 		// the parsing class know which html file it needs to process and return.
 		//return parserObj.render("still need to work this out");
+		return viewfunc();
 	};
 	
 	that.handleRequest = handleReq;
