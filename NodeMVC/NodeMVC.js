@@ -35,4 +35,4 @@ var accounts = function() {
 	return that;
 };
 
-server.run(accounts, 8888);
+server.run(accounts(), 8888);
