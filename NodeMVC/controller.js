@@ -9,18 +9,28 @@ var controller = function(spec) {
 	
 	// TODO: Remove the 3 lines below at some point.
 	// 'viewfunc' below is just a stub for this unfinished functionality.
-	// var viewfunc = function () { return 'final product from the parser ' 
-	// + ' is the default.html. This could be a file explains what it do'; };
+	var viewfunc = function () { return '<form action="logonAttempt " method="get">' +
+			  'First name: <input type="text" name="fname" /><br />' +
+			  'Last name: <input type="text" name="lname" /><br />' +
+			  '<input type="submit" value="Submit" /> </form>'};
 		
 	// this is the gerenal function that gets called by the server / router
-	var handleReq = function(req, res) {
-		//viewData[""] = "";
-		// the actual function is called here
-		// if a model is specified as a parameter, then the params for the model should be set.
-		// the view will be returned and then the res properties can be set according to this
-		// does the server have an updated copy of the view or is it the same.
-		// so then is the view saved in memory in the controller here?
-		return parserObj.render("./example.html");
+	var handleReq = function(req, res, action) {
+	
+		var request = req;
+		var response = res;
+		var url_parts = url.parse(request.url, true);
+		response.setHeader("Content-Type", "text/html");
+		// first you will need to test for a model
+		var modelParam = action.model();
+		modelParam.setParameters(url_parts.query)
+		// action returns the completed view 
+		//response.write(action(modelParam));
+		action(modelParam); // <-- call it for now to demonstrate it works 
+		// below is calling a stub
+		response.write(viewfunc());
+		response.statusCode = 200;
+		response.end();
 	};
 	
 	// the developer returns this object in their defined functions --> return view()
