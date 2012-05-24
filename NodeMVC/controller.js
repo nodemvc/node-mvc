@@ -3,6 +3,7 @@
 var controller = function(spec) {
 		
 	var that = {};
+	var url = require('url');
 		
 	// This is the part that will require the html parser object
 	var parserObj = require("./templateParser");
