@@ -3,6 +3,8 @@
 var controller = function(spec) {
 		
 	var that = {};
+	that.request = null;
+	that.response = null;
 	var url = require('url');
 		
 	// This is the part that will require the html parser object
@@ -18,6 +20,9 @@ var controller = function(spec) {
 	// this is the gerenal function that gets called by the server / router
 	var handleReq = function(request, response, action) {
 	
+		// make the request & response accessible to any derived class
+		that.request = request;
+		that.response = response;
 		var url_parts = url.parse(request.url, true);
 		response.setHeader("Content-Type", "text/html");
 		
