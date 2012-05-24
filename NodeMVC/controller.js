@@ -47,14 +47,3 @@ var controller = function(spec) {
 };
 	
 module.exports = controller;
-
-// and so this is what it would look like when a dev wants to create a controller
-//var controllerHello = function(spec) {
-
-	//var that = require('controller');
-	//that.hello = function(strName) {
-		//viewData["defaultFunc"] = strName;
-		//return that.view(); <-- This calls the parser object in the base controller class
-	//};
-//};
-//module.exports = controllerHello; <-- This is a requirement
