@@ -22,24 +22,29 @@ var controller = function(spec) {
 		var url_parts = url.parse(request.url, true);
 		response.setHeader("Content-Type", "text/html");
 		// first you will need to test for a model
+		if (typeof action.model === "function"){
 		var modelParam = action.model();
-		modelParam.setParameters(url_parts.query)
-		// action returns the completed view 
-		//response.write(action(modelParam));
-		action(modelParam); // <-- call it for now to demonstrate it works 
-		// below is calling a stub
-		response.write(viewfunc());
+			modelParam.setParameters(url_parts.query)
+			// action returns the completed view 
+			response.write(action(modelParam));
+		} else {
+			// below is calling a stub
+			response.write(viewfunc());
+		}
+		
+		
 		response.statusCode = 200;
 		response.end();
 	};
 	
 	// the developer returns this object in their defined functions --> return view()
 	that.view = function () {
+		return viewfunc();
 		// there needs to be some way of knowing the name of the function 
 		// which called this method. Does javascript have Reflection or something?
 		// otherwise, we'll need to require view('nameOfCallingFunction') to let
 		// the parsing class know which html file it needs to process and return.
-		return parserObj.render("still need to work this out");
+		//return parserObj.render("still need to work this out");
 	};
 	
 	that.handleRequest = handleReq;
