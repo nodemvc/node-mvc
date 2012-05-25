@@ -121,4 +121,56 @@ var server = (function () {
 
 })();
 
+	// This handleRequest calls the router to process the request
+	// TODO replace old handleRequest (above) with this new one when the router is available.  Correct the router function as necessary.
+/*
+	var handleRequest = function(request, response) {
+		if (request.url === '/favicon.ico') {
+			return;
+		}
+		
+		var method = request.method;
+		var responseSize = 0;	// TODO - how do you get this?
+		if ((method !== "HEAD") && (method !== "GET")) {
+			console.log("Unhandled method: " + method); 
+			response.writeHeader(501, {"Content-Type":"text/plain"});
+			response.end();
+			// TODO set response size
+			log(request, response, responseSize);
+			return;
+		}
+		
+		var writeDataFlag = (method === "HEAD") ? false : true;
+		var head = {"Content-Type": "text/plain"};
+		var pathname = url.parse(request.url).pathname;
+		console.log("Request for " + pathname + " received.");
+		
+		
+		// cookie - set and maintain a session-id if the client supports cookies
+		var cookie = request.headers['cookie'];
+		var SID = cookie;    // session id
+		if (cookie == undefined) {
+			SID = "SID=" + crypto.createHash('md5').update((new Date()).toLocaleTimeString()).digest('hex');
+		}
+		head["Set-Cookie"] = SID;    
+		//console.log("SID=" + SID);
+		
+		// call router to process request
+		try {
+			var routerResponse = router.processRequest(request, response, SID); // TODO use correct router function and return type/value
+			response.end();
+			// TODO set response size
+			log(request, response, responseSize);
+		} catch (e) {
+			console.log("Router returned an error: " + e.message);
+			response.writeHead(500, head);
+		        response.write("500 Interval Server Error");
+			response.end();
+			// TODO set response size
+			log(request, response, responseSize);			
+		}
+	};
+*/
+
+
 module.exports = server;
