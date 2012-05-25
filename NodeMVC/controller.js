@@ -18,7 +18,7 @@ var controller = function(spec) {
 			  '<input type="submit" value="Submit" /> </form>'};
 		
 	// this is the gerenal function that gets called by the server / router
-	var handleReq = function(request, response, action) {
+	var handleReq = function(request, response, action, sid) {
 	
 		// make the request & response accessible to any derived class
 		that.request = request;
@@ -27,26 +27,22 @@ var controller = function(spec) {
 		response.setHeader("Content-Type", "text/html");
 		
 		// See if a model has been defined for the action
-		if (typeof action.model === "function") {
+		if (typeof that[action].model === "function") {
 			// create the model object to be passed to the action as a parameter
-			var modelParam = action.model();
+			var modelParam = that[action].model();
 			try {
 				modelParam.setParameters(url_parts.query)
 			} catch (e) {
 				// the parameters could not be mapped to the model
-				response.statusCode = 200; // What status code to put here?
-				response.write('Parameters could not be mapped to the model');
-				response.end();
+				throw e;
 			}
+			// call the action passing in the model - returns html
+			response.write(that[action](modelParam));
 			response.statusCode = 200;
-			// call the action passing in the view - this is what to write
-			response.write(action(modelParam));
-			response.end();
 		} else {
-			// call the action - this is what to write
-			response.write(action());
-			response.statusCode = 200; // What status code to put here	
-			response.end();
+			// call the action - returns html
+			response.write(that[action]());
+			response.statusCode = 200;
 		}
 	};
 	
