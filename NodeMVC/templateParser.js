@@ -1,9 +1,9 @@
 var fs = require('fs');
 
-var viewData = {
-	'hello':function() { return '<b>Hello, World!</b>'; },
-	'jello':function() { return ' This is an Obvious Simulation'; }
-}
+//var viewData = {
+//	'hello':function() { return '<b>Hello, World!</b>'; },
+//	'jello':function() { return ' This is an Obvious Simulation'; }
+//}
 
 // The template parser object has one method: 
 //
