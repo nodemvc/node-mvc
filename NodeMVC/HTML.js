@@ -1,3 +1,4 @@
+// HTML helper function
 var HTML = function(spec) {
 	var that = {};
 	
