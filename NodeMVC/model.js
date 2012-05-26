@@ -8,15 +8,15 @@ var model = function () {
 	
 	// attempts to map the query parameters from the request to the members of the model
 	var setParams = function (query) {
-		try {
-				// for all query params, see if there is a coresponding member, otherwise throw
-				// an error back to the controller, so that the controller can notify the server
-				for(indx in query) {
-					if (that[indx] !== "undefined") { that[indx] = query[indx];}
-				}
-		} catch (e) {
-			// need to define the error message here
-			throw e;
+		
+		// for all query params, see if there is a coresponding member, otherwise throw
+		// an error back to the controller, so that the controller can notify the server
+		for(indx in query) {
+			if (that.hasOwnProperty(indx)) { 
+				that[indx] = query[indx];
+			} else {
+				throw new Error(indx + " could not be mapped to a member of the model");
+			}
 		}
 	};
 	
