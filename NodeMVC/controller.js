@@ -17,7 +17,8 @@ var controller = function(spec) {
 			  'Last name: <input type="text" name="lname" /><br />' +
 			  '<input type="submit" value="Submit" /> </form>'};
 		
-	// this is the gerenal function that gets called by the server / router
+	// this is the gerenal function that gets called by the router
+	// the action param is the name (string) of the function to execute
 	var handleReq = function(request, response, action, sid) {
 	
 		// make the request & response accessible to any derived class
@@ -46,13 +47,21 @@ var controller = function(spec) {
 		}
 	};
 	
-	// the developer returns this object in their defined functions --> return view()
+	// the developer invokes this function at the end of a function in a controller --> return that.view();
 	that.view = function () {
-		// there needs to be some way of knowing the name of the function 
-		// which called this method. Does javascript have Reflection or something?
-		// otherwise, we'll need to require view('nameOfCallingFunction') to let
-		// the parsing class know which html file it needs to process and return.
-		//return parserObj.render("still need to work this out");
+	
+		try {
+			// action & sid are pulled from 'handleReq' 
+			var action = arguments.callee.caller.caller.arguments[2];
+			var sid = arguments.callee.caller.caller.arguments[3];
+			// a model or other params are fuller from the developer defined function
+			var modelObj = arguments.callee.caller.arguments[0];
+			// TODO: This is only for testing...
+			console.log(sid + " attempting to call view file " + action)
+		} catch (e) { 
+			throw e; 
+		}
+		// call developer defined view - currently calling a stub for testing
 		return viewfunc();
 	};
 	
