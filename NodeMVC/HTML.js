@@ -1,7 +1,8 @@
 var HTML = function(spec) {
 	var that = {};
 	
-	that.Label = function(target, label) {
+	// function returning a string for the Label
+	that.label = function(target, label) {
 		return "<label for=\'" + target + "\'>" + label + "</label>"
 	};
 	
