@@ -1,10 +1,10 @@
 var fs = require('fs');
 var HTML = require('./HTML.js');
 
-var viewData = {
-	'hello':function() { return '<b>Hello, World!</b>'; },
-	'jello':function() { return ' This is an Obvious Simulation'; }
-}
+//var viewData = {
+//	'hello':function() { return '<b>Hello, World!</b>'; },
+//	'jello':function() { return ' This is an Obvious Simulation'; }
+//}
 
 // The template parser object has one method: 
 //
@@ -20,20 +20,10 @@ var templateParser = (function () {
 	// Parses html document for special markups and grabs those markups requested via 
 	// accessing the html document. The render function assumes that there is only one 
 	// model for each view template.
-	that.render = function(htmlFileName, model, viewData) {
-		var viewData = {
-	'hello':function() { return '<b>Hello, World!</b>'; },
-	'jello':function() { return ' This is an Obvious Simulation'; }
-}
-		
+	that.render = function(htmlFileName, model, viewData) {		
 		try {
-		
-			
-		
 			var content = fs.readFileSync(htmlFileName, 'ascii');
-			//var newHTMLContent = "";	
 			var newHTMLContent = content;
-			//var lines = content.split('\n');;
 			
 			// The regular expression matches the pattern "<% (any alphanumeric 
 			// and underscore character one or more times) %>".
