@@ -69,9 +69,9 @@ var controller = function(spec) {
 		}
 		
 		// call developer defined view - currently calling a stub for testing
-		if (action === "logonAttempt") return viewfuncLogonAttempt(action, modelObj);
-		if (action === "logon") return viewfuncLogon(action, modelObj);
-		//return parserObj.render(action, modelObj, viewData);
+		//if (action === "logonAttempt") return viewfuncLogonAttempt(action, modelObj);
+		//if (action === "logon") return viewfuncLogon(action, modelObj);
+		return parserObj.render(action, modelObj, that.viewData);
 	};
 	
 	that.handleRequest = handleReq;
