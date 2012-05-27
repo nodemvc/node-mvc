@@ -76,7 +76,7 @@ exports.handleRequest = function(request,response,controllers,SID){
 		
 		r.controller = array[0];
 		r.action = array[1]; 
-		if(typeof controllers[0][r.action] != 'function')
+		if(typeof controllers["accounts"][r.action] != 'function')
 		{
 			return 0;
 		}
