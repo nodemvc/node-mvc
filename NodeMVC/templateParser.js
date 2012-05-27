@@ -1,9 +1,10 @@
 var fs = require('fs');
+var HTML = require('./HTML.js');
 
-//var viewData = {
-//	'hello':function() { return '<b>Hello, World!</b>'; },
-//	'jello':function() { return ' This is an Obvious Simulation'; }
-//}
+var viewData = {
+	'hello':function() { return '<b>Hello, World!</b>'; },
+	'jello':function() { return ' This is an Obvious Simulation'; }
+}
 
 // The template parser object has one method: 
 //
@@ -21,8 +22,9 @@ var templateParser = (function () {
 	that.render = function(htmlFileName) {
 		try {
 			var content = fs.readFileSync(htmlFileName, 'ascii');
-			var newHTMLContent = "";	
-			var lines = content.split('\n');;
+			//var newHTMLContent = "";	
+			var newHTMLContent = content;
+			//var lines = content.split('\n');;
 			
 			// The regular expression matches the pattern "<% (any alphanumeric 
 			// and underscore character one or more times) %>".
@@ -34,7 +36,33 @@ var templateParser = (function () {
 			//		1: contains whatever is matched inside the parentheses
 			//		input: the input line
 			//		index: index of the matched string in the original input string
-			var parse_line = /<%\s*([a-z0-9_]+)\s*%>/gi;
+			var parse_line = /<%\s*([a-z0-9_\.]+)\s*%>/gi;
+			var parse_html_helper = /<%=\s*HTML\.([\w]+)\(\s*([\s\n\t{\w:\"\,}]+)\s*\)\s*%>/g 
+			var i;
+			
+			var result = parse_line.exec(content);
+			if (result) {
+				do {
+					console.log("replacing: " + result[0])
+					console.log("with     : " + viewData[result[1]]() + '\n');
+					newHTMLContent = newHTMLContent.replace(result[0], viewData[result[1]]());
+					result = parse_line.exec(content);
+				} while (result);
+			}
+			
+			result = parse_html_helper.exec(content);		
+			if (result) {
+				do {
+					console.log("found: \n" + result + '\n');				
+					var htmlHelperFuncName = result[1];
+					var htmlHelperFuncArguments = JSON.parse(result[2]);
+					var htmlHelperFuncReturn = HTML[htmlHelperFuncName](htmlHelperFuncArguments);
+					newHTMLContent = newHTMLContent.replace(result[0], htmlHelperFuncReturn);
+					result = parse_html_helper.exec(content);
+				} while(result)
+			}
+			
+			/***
 			var i;
 			for(i = 0; i < lines.length - 1; i += 1) {
 				var result = parse_line.exec(lines[i]);
@@ -55,8 +83,9 @@ var templateParser = (function () {
 					newHTMLContent += lines[i] + '\n';
 				}
 			}
-			console.log("template:\n:" + content);
-			console.log("new HTML:\n" + newHTMLContent);
+			***/
+			//console.log("template:\n:" + content);
+			console.log("\nnew HTML:\n" + newHTMLContent);
 			return newHTMLContent;
 		}
 		catch (err) {
