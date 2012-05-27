@@ -3,6 +3,7 @@
 var controller = function(spec) {
 		
 	var that = {};
+	that.viewData = [];
 	that.request = null;
 	that.response = null;
 	var url = require('url');
@@ -12,10 +13,15 @@ var controller = function(spec) {
 	
 	// TODO: Remove the 3 lines below at some point.
 	// 'viewfunc' below is just a stub for this unfinished functionality.
-	var viewfunc = function (action, modelObj) { return '<form action=' + '"' + action + '"' + ' method="get">' +
-			  modelObj.fname.displayName + ': <input type="text" name="fname" /><br />' +
-			  modelObj.lname.displayName + ': <input type="text" name="lname" /><br />' +
-			  '<input type="submit" value="Submit" /> </form>' };
+	var viewfuncLogonAttempt = function (action, modelObj) { return '<form action=' + '"' + action + '"' + ' method="get">' +
+		modelObj.fname.displayName + ': <input type="text" name="fname" /><br />' +
+		  modelObj.lname.displayName + ': <input type="text" name="lname" /><br />' +
+			'<input type="submit" value="Submit" /> </form>' };
+			  
+	var viewfuncLogon = function (action, modelObj) { return '<form action=' + '"logonAttempt"' + ' method="get">' +
+		' First Name: <input type="text" name="fname" /><br />' +
+		  ' Last Name: <input type="text" name="lname" /><br />' +
+			'<input type="submit" value="Submit" /> </form>' };
 		
 	// this is the gerenal function that gets called by the router
 	// the action param is the name (string) of the function to execute
@@ -61,8 +67,11 @@ var controller = function(spec) {
 		} catch (e) { 
 			throw e; 
 		}
+		
 		// call developer defined view - currently calling a stub for testing
-		return viewfunc(action, modelObj);
+		if (action === "logonAttempt") return viewfuncLogonAttempt(action, modelObj);
+		if (action === "logon") return viewfuncLogon(action, modelObj);
+		//return parserObj.render(action, modelObj, viewData);
 	};
 	
 	that.handleRequest = handleReq;
