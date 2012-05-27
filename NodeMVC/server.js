@@ -2,11 +2,11 @@
 var controllers = [];
 var http = require("http");
 var url = require("url");
-var cluster = require('cluster');
 var fs = require("fs");		// TODO is this needed? - Yes probably for writing to the log file
 var path = require("path");	// TODO is this needed?
 var crypto = require("crypto"); // for cache control
 var net = require('net');	// TODO is this needed?
+var router = require('./router');
 
 // ******* In case you dont have the logging part from HW1. Otherwise, you can delete this code *******
 var log = function (req, res, bytesSent) {
@@ -50,7 +50,6 @@ var server = (function () {
 		// occurs, the the router will be notified and the router should notify the server.
 		// Then the server should know how to respond.
 		
-		
 		// cookie - set and maintain a session-id if the client supports cookies
 		var cookie = request.headers['cookie'];
 		var SID = cookie;    // session id
@@ -61,6 +60,23 @@ var server = (function () {
 		//console.log("SID=" + SID);
 		// TODO Add support for other cookie version(s)
 		// remember that the cookie2 RFC itself has been depricated
+
+		//Route the request
+		var result;
+		try
+		{	
+			result = router.handleRequest(request,response,controllers,SID);
+		}
+		catch(err)
+		{
+		
+		}		
+
+		//TODO define the result code
+		if(result)
+		{
+
+		}
 		
 		// here's where the router comes into play for finding the appropriate controller 
 		// and invoking the appropriate function for a working demonstration I will 
@@ -99,25 +115,19 @@ var server = (function () {
 		}
 	};
 	
-	// currently takes a controller and port number.
-	var runServer = function (cntrlr, port) {
-	
-		if (cluster.isMaster) {
-			var worker = cluster.fork();
-			worker.on('death', function(worker) {
-				// should probably add some logic to handle restart the process?
-				console.log('worker ' + worker.pid + ' died');
-			});
-		} else {
-		
-			// viewData = vwData; dont think this is necessary here.
-			controllers.push(cntrlr);
-			// child processes can share the same port
-			http.Server(handleRequest).listen(port);
-		}
+	// currently takes the port number
+	var runServer = function (port) {
+		http.Server(handleRequest).listen(port);
 	};
 	
-	return { run : runServer };
+	// adds a controller to the array of controllers
+	var addController = function (controller) {
+		// we need to be able to specify the name of a controller
+		// so that when the router is looking for a controller it can access it by name
+		controllers.push(cntrlr);
+	};
+	
+	return { run : runServer, addController : addController };
 
 })();
 
