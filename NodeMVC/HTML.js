@@ -2,18 +2,23 @@
 var HTML = (function(spec) {
 	var that = {};
 	
+	var standardAttribute = {
+		
+	};
+	
 	// function returning a string for the Label
 	that.label = function(args) {
 		return "<label for=\"" + args.target + "\">" + args.label + "</label>"
 	};
 	
-	that.submitButton(args) {
+	that.submitButton = function(args) {
 		return '<input type="submit" value="' + args.buttonName + '"/>';
 	};
 	
 	// Supports all attributes from this link: http://www.w3schools.com/tags/tag_textarea.asp
-	that.textArea(args) {
+	that.textArea = function(args) {
 		//TODO:
+		return '';
 	};
 	
 	that.textBox = function(args) {
@@ -33,9 +38,6 @@ var HTML = (function(spec) {
 			that.submitButton(buttonName) + 
 			'</form>\n';
 	};
-	
-
-	
 	
 	return that;
 })();

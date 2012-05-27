@@ -18,8 +18,9 @@ var templateParser = (function () {
 	var that = {};
 
 	// Parses html document for special markups and grabs those markups requested via 
-	// accessing the html document.
-	that.render = function(htmlFileName) {
+	// accessing the html document. The render function assumes that there is only one 
+	// model for each view template.
+	that.render = function(htmlFileName, model, viewData) {
 		try {
 			var content = fs.readFileSync(htmlFileName, 'ascii');
 			//var newHTMLContent = "";	
@@ -38,9 +39,12 @@ var templateParser = (function () {
 			//		index: index of the matched string in the original input string
 			var parse_line = /<%\s*([a-z0-9_\.]+)\s*%>/gi;
 			
-			// The  regular expression parses for <%= HTML.functionName( JSON-Notation ) %>.
+			// The regular expression parses for <%= HTML.functionName( JSON-Notation ) %>.
 			// JSON notation can span several lines and include tabs and spaces. 
-			var parse_html_helper = /<%=\s*HTML\.([\w]+)\(\s*({*[\s\n\t\w:\"\,]*}*)\s*\)\s*%>/g 
+			var parse_html_helper = /<%=\s*HTML\.([\w]+)\(\s*([{\s}\n\t\w:\"\,]*)\s*\)\s*%>/g 
+
+			// 			
+			var isJSON = /\s*{.+}\s*/
 			
 			var result = parse_line.exec(content);
 			if (result) {
@@ -60,11 +64,15 @@ var templateParser = (function () {
 					
 					var htmlHelperFuncArguments = null;
 					if (result[2]) {
-						htmlHelperFuncArguments = JSON.parse(result[2]);
+						if (isJSON.exec(results(2)) { 
+							htmlHelperFuncArguments = JSON.parse(result[2]);
+						}
 					}
 					
-					var htmlHelperFuncReturn = HTML[htmlHelperFuncName](htmlHelperFuncArguments || null);
+					// assumes
+					var htmlHelperFuncReturn = HTML[htmlHelperFuncName](htmlHelperFuncArguments || model);
 					newHTMLContent = newHTMLContent.replace(result[0], htmlHelperFuncReturn);
+					
 					result = parse_html_helper.exec(content);
 				} while(result)
 			}
@@ -74,8 +82,9 @@ var templateParser = (function () {
 			return newHTMLContent;
 		}
 		catch (err) {
-			console.log(err);
-			return 'TemplateParser: Trouble rendering HTML file. Check the log files for more information.';
+			console.log("Error Parsing HTML template:\n" + err);
+			// logs error and throws error back to the controller
+			throw err;
 		}
 	}
 	return that;
