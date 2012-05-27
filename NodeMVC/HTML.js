@@ -7,21 +7,34 @@ var HTML = (function(spec) {
 		return "<label for=\"" + args.target + "\">" + args.label + "</label>"
 	};
 	
-	that.textBox = function(action, txtAreaName, txtBoxCol, rowsEnabled, initialTxt, inputType, inputValue) {
-		action = action || '';
-		txtBoxCol = txtBoxCol || '40';
-		rowsEnabled = rowsEnabled || 'Y';
-		initialTxt = initialTxt || '';
-		//inputType
-		inputValue = inputValue || 'Submit';
+	that.submitButton(args) {
+		return '<input type="submit" value="' + args.buttonName + '"/>';
+	};
+	
+	// Supports all attributes from this link: http://www.w3schools.com/tags/tag_textarea.asp
+	that.textArea(args) {
+		//TODO:
+	};
+	
+	that.textBox = function(args) {
+		var action = args.action || '';
+		var txtAreaName = args.areaName;
+		var txtBoxCol = args.col || '40';
+		var rowsEnabled = args.rows || 'Y';
+		var initialTxt = args.text || '';
+		//var inputType = args.inputType;
+		var buttonName = args.buttonName || 'Submit';
 				
 		return '<form method=\"post\" action=\"' + action +'\">\n' +
 			'<textarea name=\"' + txtAreaName + '\" cols=\"' + txtBoxCol + '\" rows=\"' + rowsEnabled + '\">\n' +
 			initialTxt + '\n' +
 			'</textarea><br>\n' +
-			'<input type=\"' + inputType + '\" value=\"' + inputValue + '\" />\n' +
+
+			that.submitButton(buttonName) + 
 			'</form>\n';
 	};
+	
+
 	
 	
 	return that;

@@ -37,8 +37,10 @@ var templateParser = (function () {
 			//		input: the input line
 			//		index: index of the matched string in the original input string
 			var parse_line = /<%\s*([a-z0-9_\.]+)\s*%>/gi;
-			var parse_html_helper = /<%=\s*HTML\.([\w]+)\(\s*([\s\n\t{\w:\"\,}]+)\s*\)\s*%>/g 
-			var i;
+			
+			// The  regular expression parses for <%= HTML.functionName( JSON-Notation ) %>.
+			// JSON notation can span several lines and include tabs and spaces. 
+			var parse_html_helper = /<%=\s*HTML\.([\w]+)\(\s*({*[\s\n\t\w:\"\,]*}*)\s*\)\s*%>/g 
 			
 			var result = parse_line.exec(content);
 			if (result) {
@@ -55,36 +57,19 @@ var templateParser = (function () {
 				do {
 					console.log("found: \n" + result + '\n');				
 					var htmlHelperFuncName = result[1];
-					var htmlHelperFuncArguments = JSON.parse(result[2]);
-					var htmlHelperFuncReturn = HTML[htmlHelperFuncName](htmlHelperFuncArguments);
+					
+					var htmlHelperFuncArguments = null;
+					if (result[2]) {
+						htmlHelperFuncArguments = JSON.parse(result[2]);
+					}
+					
+					var htmlHelperFuncReturn = HTML[htmlHelperFuncName](htmlHelperFuncArguments || null);
 					newHTMLContent = newHTMLContent.replace(result[0], htmlHelperFuncReturn);
 					result = parse_html_helper.exec(content);
 				} while(result)
 			}
 			
-			/***
-			var i;
-			for(i = 0; i < lines.length - 1; i += 1) {
-				var result = parse_line.exec(lines[i]);
-				
-				// Because of the global modifier on the regular expression, the regular
-				// expression will return a new match on the same string each time it is
-				// executed until there aren't anymore matches at which point it'll 
-				// return a falsy value.
-				if (result) {
-					var line = lines[i];
-					do {
-						line = line.replace(result[0], viewData[result[1]]());
-						result = parse_line.exec(lines[i]);
-					} while (result);
-					newHTMLContent += line + '\n';
-				} 
-				else {
-					newHTMLContent += lines[i] + '\n';
-				}
-			}
-			***/
-			//console.log("template:\n:" + content);
+			console.log("template:\n" + content);
 			console.log("\nnew HTML:\n" + newHTMLContent);
 			return newHTMLContent;
 		}
