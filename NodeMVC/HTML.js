@@ -2,8 +2,16 @@
 var HTML = (function(spec) {
 	var that = {};
 	
-	var standardAttribute = {
-		
+	var standAttribute = {
+		accesskey:"accesskey=",
+		class:"class=",
+		dir:"dir=",
+		id:"id=",
+		lang:"lang=",
+		style:"style=",
+		tabindex:"tabindex=",
+		title:"title=",
+		xmllang:"xml:lang="
 	};
 	
 	// function returning a string for the Label
@@ -17,7 +25,7 @@ var HTML = (function(spec) {
 	
 	// Supports all attributes from this link: http://www.w3schools.com/tags/tag_textarea.asp
 	that.textArea = function(args) {
-		//TODO:
+		
 		return '';
 	};
 	
@@ -34,10 +42,13 @@ var HTML = (function(spec) {
 			'<textarea name=\"' + txtAreaName + '\" cols=\"' + txtBoxCol + '\" rows=\"' + rowsEnabled + '\">\n' +
 			initialTxt + '\n' +
 			'</textarea><br>\n' +
-
 			that.submitButton(buttonName) + 
 			'</form>\n';
 	};
+	
+	that.test = function() {
+		return 'nothing'
+	}
 	
 	return that;
 })();

@@ -21,7 +21,15 @@ var templateParser = (function () {
 	// accessing the html document. The render function assumes that there is only one 
 	// model for each view template.
 	that.render = function(htmlFileName, model, viewData) {
+		var viewData = {
+	'hello':function() { return '<b>Hello, World!</b>'; },
+	'jello':function() { return ' This is an Obvious Simulation'; }
+}
+		
 		try {
+		
+			
+		
 			var content = fs.readFileSync(htmlFileName, 'ascii');
 			//var newHTMLContent = "";	
 			var newHTMLContent = content;
@@ -44,7 +52,7 @@ var templateParser = (function () {
 			var parse_html_helper = /<%=\s*HTML\.([\w]+)\(\s*([{\s}\n\t\w:\"\,]*)\s*\)\s*%>/g 
 
 			// 			
-			var isJSON = /\s*{.+}\s*/
+			var isJSON = /\s*{[\w\s:\"\,]+}\s*/
 			
 			var result = parse_line.exec(content);
 			if (result) {
@@ -64,13 +72,20 @@ var templateParser = (function () {
 					
 					var htmlHelperFuncArguments = null;
 					if (result[2]) {
-						if (isJSON.exec(results(2)) { 
+						console.log("HTML: Found args");
+						var isJSONresult = isJSON.exec(result[2]);
+						if (isJSONresult) {
+							console.log("Args: is JSON"); 
 							htmlHelperFuncArguments = JSON.parse(result[2]);
+						} 
+						else {
+							console.log("Args: regular obj");
+							htmlHelperFuncArguments = model;
 						}
 					}
 					
-					// assumes
-					var htmlHelperFuncReturn = HTML[htmlHelperFuncName](htmlHelperFuncArguments || model);
+					// arguments can be null. this is for HTML.functions that take no arguments
+					var htmlHelperFuncReturn = HTML[htmlHelperFuncName](htmlHelperFuncArguments);
 					newHTMLContent = newHTMLContent.replace(result[0], htmlHelperFuncReturn);
 					
 					result = parse_html_helper.exec(content);
