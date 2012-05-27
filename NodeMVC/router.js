@@ -81,6 +81,6 @@ exports.handleRequest = function(request,response,controllers,SID){
 			return 0;
 		}
 	}
-	controllers[0].handleRequest(request,response,r.action,SID);
+	controllers["accounts"].handleRequest(request,response,r.action,SID);
 	
 };
