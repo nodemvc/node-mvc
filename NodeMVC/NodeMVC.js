@@ -12,9 +12,9 @@ var accounts = function() {
 	// developer defines an account model object 
 	var accountModel = function() {
 		var that = model(); // <-- inherit the base model class
-		that.fname = "";
-		that.lname = "";
-		that.password = "";
+		that.fname = that.mProperty("First Name", true);
+		that.lname = that.mProperty("Last Name", true);
+		that.password = that.mProperty("Password", true);
 		return that;
 	};
 		
@@ -26,7 +26,7 @@ var accounts = function() {
 	// developer defines a logon attempt function for this account controller
 	that.logonAttempt = function(accountModel) {
 		// logic to validate the user would go here  
-		console.log("validating " + accountModel.firstName + ', ' + accountModel.lastName)
+		console.log("validating " + accountModel.fname.getValue() + ', ' + accountModel.lname.getValue());
 		return that.view();
 	};
 		
