@@ -6,10 +6,6 @@ var HTML = function(spec) {
 		return "<label for=\'" + target + "\'>" + label + "</label>";
 	};
 	
-	that.actionLink(args) {
-		//TODO:
-	};	
-	
 	//
 	// Supports all required and optional attributes from this link:  http://www.w3schools.com/tags/tag_form.asp
 	// Required:
