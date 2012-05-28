@@ -60,27 +60,20 @@ exports.handleRequest = function(request,response,controllers,SID){
 	if(r.controller === null)
 	{
 		var array = pathname.split('/');
-		// temporarily commented out by kmc - (why are you looking for 3? or why would the controller be in the second place?)
-		//if(array.length != 3)
-		//{
-			//return null;
-		//}
+		
+		if(array.length != 3)
+		{
+			return null;
+		}
 
-		// temporarily commented out by kmc
-		//r.controller = array[1];
-		//r.action = array[2]; 
-		
-		// temporarily added by kmc - (why are you looking for 3? or why would the controller be in the second place?)
-		// remember in the spec the expected url is "{controller}/{action}/?{param1=value}&{param2=value}”
-		// controller would be the first and the action would be the second
-		
-		r.controller = array[0];
-		r.action = array[1]; 
-		if(typeof controllers["accounts"][r.action] != 'function')
+		r.controller = array[1];
+		r.action = array[2]; 
+
+		if(typeof controllers[r.controller][r.action] != 'function')
 		{
 			return 0;
 		}
 	}
-	controllers["accounts"].handleRequest(request,response,r.action,SID);
+	controllers[r.controller].handleRequest(request,response,r.action,SID);
 	
 };
