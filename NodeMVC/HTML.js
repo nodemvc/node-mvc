@@ -1,7 +1,6 @@
 // HTML helper function
 var HTML = (function(spec) {
 	var that = {};
-	
 	var standAttribute = {
 		accesskey:"accesskey=",
 		class:"class=",
@@ -12,46 +11,46 @@ var HTML = (function(spec) {
 		tabindex:"tabindex=",
 		title:"title=",
 		xmllang:"xml:lang="
-	};
-	
+		};
+
 	//
 	// Supports all required and optional attributes from this link:  http://www.w3schools.com/tags/tag_form.asp
 	// Required:
 	//	htmlArgs[action]	--> 	action
 	// throws exception if a required attribute is missing
 	//
-	that.beginForm(modelArgs, htmlArgs) {
+	that.beginForm = function(modelArgs, htmlArgs) {
 		var formStr = "<form";
 		
 		// Required attributes
-		var action = htmlArgs.action;
+		var action = htmlArgs["action"];
 		if (action === null) {
 			throw "form tag missing required attribute 'action'";
 		}
 		formStr = formStr + " action=\'" + action + "\'"; 
 
 		// Optional attributes	
-		var accept = htmlArgs.accept;
+		var accept = htmlArgs["accept"];
 		if (accept !== null) {
 			formStr = formStr +  " accept=\'" + accept + "\'";
 		}
-		var accept-charset = htmlArgs.accept-charset;
-		if (accept-charset !== null) {
-			formStr = formStr +  " accept-charset=\'" + accept-charset + "\'";
+		var acceptCharset = htmlArgs["accept-charset"];
+		if (acceptCharset !== null) {
+			formStr = formStr +  " accept-charset=\'" + acceptCharset + "\'";
 		}
-		var enctype = htmlArgs.enctype;
+		var enctype = htmlArgs["enctype"];
 		if (enctype !== null) {
 			formStr = formStr +  " enctype=\'" + enctype + "\'";
 		}
-		var method = htmlArgs.method;
+		var method = htmlArgs["method"];
 		if(method !== null) {
 			formStr = formStr +  " method=\'" + method + "\'";
 		}
-		var name = htmlArgs.name;
+		var name = htmlArgs["name"];
 		if (name !== null) {
 			formStr = formStr +  " name=\'" + name + "\'";
 		}
-		var target = htmlArgs.target;
+		var target = htmlArgs["target"];
 		if(target !== null) {
 			formStr = formStr +  " target=\'" + target + "\'";
 		}		
@@ -69,7 +68,7 @@ var HTML = (function(spec) {
 	//
 	// throws exception if a required attribute(s) is missing
 	//
-	that.checkBox(modelArgs, htmlArgs) {
+	that.checkBox = function(modelArgs, htmlArgs) {
 		var ckbxStr = "<input type=\'" + "checkbox";
 		// Required attributes
 		var name = modelArgs.propertyName;
@@ -90,7 +89,7 @@ var HTML = (function(spec) {
 	//
 	// throws exception if a required attribute(s) is missing
 	//
-	that.hidden(modelArgs, htmlArgs) {
+	that.hidden = function(modelArgs, htmlArgs) {
 		var htmlStr = "<input type=\'" + "hidden";
 		// Required attributes
 		var name = modelArgs.propertyName;
@@ -104,29 +103,24 @@ var HTML = (function(spec) {
 		return htmlStr;
 	};
 	
-	that.actionLink(modelArgs, htmlArgs) {
+	that.actionLink = function(modelArgs, htmlArgs) {
 		// example:  <a href="/Account/LogOn">Log On</a> 
-		var action = htmlArgs.action;
+		var action = htmlArgs["action"];
 		if (action === null) {
 			throw "actionLink tag missing required attribute 'action'";
 		}
 		
-		var linkDisplayName = htmlArgs.name;
+		var linkDisplayName = htmlArgs["name"];
 		if (linkDisplayName === null) {
 			throw "actionLink tag missing required attribute 'name'";
 		}
 
 		var actionLinkStr = "<a href=\'" + action + "\'" + ">" + linkDisplayName + "</a>" ;
 		return actionLinkStr;
-	}
-	
-	
-	that.dropDownList(args) {
-		//TODO:
 	};
 
 	// Returns form end tag
-	that.endForm(args) {
+	that.endForm = function(args) {
 		return "</form>";
 	};
 
