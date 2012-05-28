@@ -12,9 +12,9 @@ var accounts = function() {
 	// developer defines an account model object 
 	var accountModel = function() {
 		var that = model(); // <-- inherit the base model class
-		that.fname = that.mProperty("First Name", true);
-		that.lname = that.mProperty("Last Name", true);
-		that.password = that.mProperty("Password", true);
+		that.addProperty("fname", {displayName: "First Name", required: true});
+		that.addProperty("lname", {displayName: "Last Name", required: true});
+		that.addProperty("password", {displayName: "Password", required: true, dataType: "password"});
 		return that;
 	};
 		
