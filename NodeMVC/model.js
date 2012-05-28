@@ -3,6 +3,7 @@
 var model = function (spec) {
 	
 	var that = {};
+	that.clientBound = false;
 	
 	// expecting 'url.parse(request.url, true).query' url
 	var bindModel = function (query) {
