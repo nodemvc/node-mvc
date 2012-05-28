@@ -15,28 +15,42 @@ var model = function (spec) {
 		}
 	};
 	
-	// model property is used to represent data in the model
-	var mProperty = function(displayName, required, dataType) {
-		var that = {};
-		that.prop = "";
-		// specifies the display name for the property
-		that.displayName = displayName;
-		// specifies that a data field value is required
-		that.required = required;
-		// specifies the name of an additional type to associate with a data field
-		that.dataType = dataType;
-	
-		that.getValue = function() {
-			return that.value;
+	// adds a property by the name specified as the first argument
+	var addProperty = function() {
+		
+		// the propertyName string is what is expected as the first parameter
+		if (arguments.length === 0 || typeof arguments[0] !== "string") {
+			throw new Error("addProperty: Must define a propertyName string");
+		}
+		
+		var value = null;
+		
+		// add the property to the model and assign it an object
+		that[arguments[0]] = {};
+		
+		// property attributes are defined as the second parameter
+		// common attributes include; displayName, required, dataType
+		// these attributes can be used by the html helpers in the view 
+		if ( arguments.length > 1 ) {
+			that[arguments[0]] = arguments[1];
+		}
+		
+		// give the property a propertyName property
+		// the property object needs to know its own name
+		that[arguments[0]].propertyName = arguments[0];
+		
+		// accessor for property value
+		that[arguments[0]].getValue = function() {
+			return value;
 		};
 		
-		that.setValue = function(val) {
-			that.value = val;
+		// getter for property value
+		that[arguments[0]].setValue = function(val) {
+			value = val;
 		};
-		
-		return that;
 	};
-	that.mProperty = mProperty;
+	
+	that.addProperty = addProperty;
 	that.bindModel = bindModel;
 	return that;
 };
