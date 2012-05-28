@@ -35,4 +35,5 @@ var accounts = function() {
 	return that;
 };
 
-server.run(accounts(), 8888);
+server.addController(accounts(), "accounts");
+server.run(8888);

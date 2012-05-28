@@ -1,4 +1,5 @@
 var fs = require('fs');
+var HTML = require('./HTML.js');
 
 //var viewData = {
 //	'hello':function() { return '<b>Hello, World!</b>'; },
@@ -17,12 +18,12 @@ var templateParser = (function () {
 	var that = {};
 
 	// Parses html document for special markups and grabs those markups requested via 
-	// accessing the html document.
-	that.render = function(htmlFileName) {
+	// accessing the html document. The render function assumes that there is only one 
+	// model for each view template.
+	that.render = function(htmlFileName, model, viewData) {		
 		try {
 			var content = fs.readFileSync(htmlFileName, 'ascii');
-			var newHTMLContent = "";	
-			var lines = content.split('\n');;
+			var newHTMLContent = content;
 			
 			// The regular expression matches the pattern "<% (any alphanumeric 
 			// and underscore character one or more times) %>".
@@ -34,34 +35,61 @@ var templateParser = (function () {
 			//		1: contains whatever is matched inside the parentheses
 			//		input: the input line
 			//		index: index of the matched string in the original input string
-			var parse_line = /<%\s*([a-z0-9_]+)\s*%>/gi;
-			var i;
-			for(i = 0; i < lines.length - 1; i += 1) {
-				var result = parse_line.exec(lines[i]);
-				
-				// Because of the global modifier on the regular expression, the regular
-				// expression will return a new match on the same string each time it is
-				// executed until there aren't anymore matches at which point it'll 
-				// return a falsy value.
-				if (result) {
-					var line = lines[i];
-					do {
-						line = line.replace(result[0], viewData[result[1]]());
-						result = parse_line.exec(lines[i]);
-					} while (result);
-					newHTMLContent += line + '\n';
-				} 
-				else {
-					newHTMLContent += lines[i] + '\n';
-				}
+			var parse_line = /<%\s*([a-z0-9_\.]+)\s*%>/gi;
+			
+			// The regular expression parses for <%= HTML.functionName( JSON-Notation ) %>.
+			// JSON notation can span several lines and include tabs and spaces. 
+			var parse_html_helper = /<%=\s*HTML\.([\w]+)\(\s*([{\s}\n\t\w:\"\,]*)\s*\)\s*%>/g 
+
+			// 			
+			var isJSON = /\s*{[\w\s:\"\,]+}\s*/
+			
+			var result = parse_line.exec(content);
+			if (result) {
+				do {
+					console.log("replacing: " + result[0])
+					console.log("with     : " + viewData[result[1]]() + '\n');
+					newHTMLContent = newHTMLContent.replace(result[0], viewData[result[1]]());
+					result = parse_line.exec(content);
+				} while (result);
 			}
-			console.log("template:\n:" + content);
-			console.log("new HTML:\n" + newHTMLContent);
+			
+			result = parse_html_helper.exec(content);		
+			if (result) {
+				do {
+					console.log("found: \n" + result + '\n');				
+					var htmlHelperFuncName = result[1];
+					
+					var htmlHelperFuncArguments = null;
+					if (result[2]) {
+						console.log("HTML: Found args");
+						var isJSONresult = isJSON.exec(result[2]);
+						if (isJSONresult) {
+							console.log("Args: is JSON"); 
+							htmlHelperFuncArguments = JSON.parse(result[2]);
+						} 
+						else {
+							console.log("Args: regular obj");
+							htmlHelperFuncArguments = model;
+						}
+					}
+					
+					// arguments can be null. this is for HTML.functions that take no arguments
+					var htmlHelperFuncReturn = HTML[htmlHelperFuncName](htmlHelperFuncArguments);
+					newHTMLContent = newHTMLContent.replace(result[0], htmlHelperFuncReturn);
+					
+					result = parse_html_helper.exec(content);
+				} while(result)
+			}
+			
+			console.log("template:\n" + content);
+			console.log("\nnew HTML:\n" + newHTMLContent);
 			return newHTMLContent;
 		}
 		catch (err) {
-			console.log(err);
-			return 'TemplateParser: Trouble rendering HTML file. Check the log files for more information.';
+			console.log("Error Parsing HTML template:\n" + err);
+			// logs error and throws error back to the controller
+			throw err;
 		}
 	}
 	return that;
