@@ -13,16 +13,11 @@ var controller = function(spec) {
 	
 	// TODO: Remove the 3 lines below at some point.
 	// 'viewfunc' below is just a stub for this unfinished functionality.
-	var viewfuncLogonAttempt = function (action, modelObj) { return '<form action=' + '"' + action + '"' + ' method="get">' +
-		modelObj.fname.displayName + ': <input type="text" name="fname" /><br />' +
-		  modelObj.lname.displayName + ': <input type="text" name="lname" /><br />' +
+	var viewfuncLogon = function (action, modelObj) { return '<form action=' + '"' + action + '"' + ' method="get">' +
+		modelObj.username.displayName + ': <input type="text" name="username" /><br />' +
+		  modelObj.password.displayName + ': <input type="password" name="password" /><br />' +
 			'<input type="submit" value="Submit" /> </form>' };
 			  
-	var viewfuncLogon = function (action, modelObj) { return '<form action=' + '"logonAttempt"' + ' method="get">' +
-		' First Name: <input type="text" name="fname" /><br />' +
-		  ' Last Name: <input type="text" name="lname" /><br />' +
-			'<input type="submit" value="Submit" /> </form>' };
-		
 	// this is the gerenal function that gets called by the router
 	// the action param is the name (string) of the function to execute
 	var handleReq = function(request, response, action, sid) {
@@ -38,7 +33,8 @@ var controller = function(spec) {
 			// create the model object to be passed to the action as a parameter
 			var modelParam = that[action].model();
 			try {
-				modelParam.bindModel(url_parts.query)
+				modelParam.bindModel(url_parts.query);
+				modelParam.clientBound = url_parts.search.length > 0 ? true : false;
 			} catch (e) {
 				// the parameters could not be mapped to the model
 				throw e;
@@ -69,8 +65,7 @@ var controller = function(spec) {
 		}
 		
 		// call developer defined view - currently calling a stub for testing
-		//if (action === "logonAttempt") return viewfuncLogonAttempt(action, modelObj);
-		//if (action === "logon") return viewfuncLogon(action, modelObj);
+		if (action === "logon") return viewfuncLogon(action, modelObj, that.viewData);
 		return parserObj.render(action, modelObj, that.viewData);
 	};
 	
