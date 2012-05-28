@@ -65,7 +65,7 @@ var HTML = (function(spec) {
 	//
 	// Required:
 	//	modelArgs.propertyName	-> name
-	//	modelArgs.displayName	-> value
+	//	modelArgs.getValue()	-> value
 	//
 	// throws exception if a required attribute(s) is missing
 	//
@@ -74,15 +74,36 @@ var HTML = (function(spec) {
 		// Required attributes
 		var name = modelArgs.propertyName;
 		if (name === null) {
-			throw "checkBox tag missing required attribute 'name'";
+			throw "checkBox missing required attribute 'name'";
 		}
 		ckbxStr = ckbxStr + " name=\'" + name + "\'";
 		
 		var isChecked = modelArgs.getValue() ? "yes" : "no";
-		ckbxStr = ckbxStr + " value=\'" + isChecked + "\'" + " checked=\'" + isChecked + "\'" + " />";
+		ckbxStr = ckbxStr + " value=\'" + isChecked + "\'" + " checked=\'" + isChecked + "\'" + " />\n";
 		return ckbxStr;
 	};
 
+	//
+	// Required:
+	//	modelArgs.propertyName	-> name
+	//	modelArgs.getValue()	-> value
+	//
+	// throws exception if a required attribute(s) is missing
+	//
+	that.hidden(modelArgs, htmlArgs) {
+		var htmlStr = "<input type=\'" + "hidden";
+		// Required attributes
+		var name = modelArgs.propertyName;
+		if (name === null) {
+			throw "hidden missing required attribute 'name'";
+		}
+		htmlStr = htmlStr + " name=\'" + name + "\'";
+		
+		var value = modelArgs.getValue() ? "yes" : "no";
+		htmlStr = htmlStr + " value=\'" + value + "\'/>\n";
+		return htmlStr;
+	};
+	
 	that.actionLink(modelArgs, htmlArgs) {
 		// example:  <a href="/Account/LogOn">Log On</a> 
 		var action = htmlArgs.action;
