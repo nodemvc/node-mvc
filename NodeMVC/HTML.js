@@ -78,20 +78,8 @@ var HTML = (function(spec) {
 		}
 		ckbxStr = ckbxStr + " name=\'" + name + "\'";
 		
-		var value = modelArgs.displayName;	// TODO (RCP) I'm not sure if this is the correct field to use
-		if (value === null) {
-			throw "checkBox tag missing required attribute 'value'";
-		}
-		ckbxStr = ckbxStr + " value=\'" + value + "\'";
-		
-		// Optional attributes
-		var checked = modelArgs.getValue();
-		if (checked !== null) {
-			var isChecked = checked ? "yes" : "no";
-			ckbxStr = ckbxStr + " checked=\'" + isChecked + "\'";
-		}
-		
-		ckbxStr = ckbxStr + " />";
+		var isChecked = modelArgs.getValue() ? "yes" : "no";
+		ckbxStr = ckbxStr + " value=\'" + isChecked + "\'" + " checked=\'" + isChecked + "\'" + " />";
 		return ckbxStr;
 	};
 
