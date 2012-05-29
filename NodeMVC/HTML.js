@@ -69,7 +69,7 @@ var HTML = (function(spec) {
 				label += 'id="' + modelArgs.propertyName + '">';
 			} 
 			else {
-				label += '">";
+				label += '">"';
 			}
 
 			label += modelArgs.displayName + '</label>';
