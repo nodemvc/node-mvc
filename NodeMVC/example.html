@@ -1,22 +1,20 @@
 <html>
-<p><% hello %> <% jello %> </p>
 
-<%= HTML.label( {
-	"label":"this_label",
-	"target":"American_Dad"
-}) %> 
+<!-- Access will print contents of viewData["insertScript"] -->
+<% insertScript %>
 
-<%= HTML.textBox( {
-"action":"stuff",
-"areaName":"gary",
-"col":40,
-"rows":"Y",
-"text":"this is a test",
-"inputType":"submit",
-"buttonName":"Submit"} ) %>
 
-<%= HTML.textArea( mObj ) %>
 
-<%= HTML.test() %>
+<%= HTML.label(model.label, {"rows":"4", "cols":"40"}) %> 
+
+<%= HTML.label(model.label  ) %>
+
+<%= HTML.beginForm(model.form) %>
+<%= HTML.inputField(model.inputField, 
+	{"stuff":"quy", 
+	"afdsdf":"sdfsdfs"}) %>
+<%= HTML.endForm() %>
+
+
 
 </html>

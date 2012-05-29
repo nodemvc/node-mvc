@@ -66,7 +66,7 @@ var HTML = (function(spec) {
 			var label = '<label';
 			
 			if (modelArgs.propertyName) {
-				label += 'id="' + modelArgs.propertyName + '">';
+				label += ' id="' + modelArgs.propertyName + '">';
 			} 
 			else {
 				label += '">"';
@@ -141,7 +141,7 @@ var HTML = (function(spec) {
 	};
 
 	// Returns form end tag
-	that.endForm = function(args) {
+	that.endForm = function(modelArgs, htmlArgs) {
 		return "</form>";
 	};
 	
@@ -200,7 +200,7 @@ var HTML = (function(spec) {
 	// 		modelArgs.displayName
 	//		modelArgs.propertyName	
 	that.inputField = function(modelArgs, htmlArgs) {
-		if (modelArgs.propertyName() && modelArgs.displayName) {
+		if (modelArgs.propertyName && modelArgs.displayName) {
 			var input_field = modelArgs.displayName + 
 				' <input type="text" name="' + modelArgs.propertyName + '"/>';
 				
