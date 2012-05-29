@@ -1,32 +1,49 @@
 // HTML helper function
 var HTML = (function(spec) {
 	var that = {};
+
+	that.label = function(modelArgs, htmlArgs) {
+		if (modelArgs.displayName) {
+			var label = '<label';
+			
+			if (htmlArgs.id) {
+				label += 'id="' + htmlArgs.id + '">' 
+			}
+		
+			label += modelArgs.displayName + '</label>';
+			return label;
+		} 
+		else {
+			throw "Html.label: missing displaying name for model";
+		}
+	}
 	
-	var standAttribute = {
-		accesskey:"accesskey=",
-		class:"class=",
-		dir:"dir=",
-		id:"id=",
-		lang:"lang=",
-		style:"style=",
-		tabindex:"tabindex=",
-		title:"title=",
-		xmllang:"xml:lang="
-	};
-	
-	// function returning a string for the Label
-	that.label = function(args) {
-		return "<label for=\"" + args.target + "\">" + args.label + "</label>"
-	};
-	
-	that.submitButton = function(args) {
-		return '<input type="submit" value="' + args.buttonName + '"/>';
+	that.submitButton = function(modelArgs, htmlArgs) {
+		if (modelArgs.displayName) {
+			var button = '<input type="submit" value="' + modelArgs.displayName + '"/>';
+			return button;
+		} 
+		else {
+			throw "Html.submitButton: missing displaying name for model";
+		}
 	};
 	
 	// Supports all attributes from this link: http://www.w3schools.com/tags/tag_textarea.asp
 	that.textArea = function(args) {
 		
 		return '';
+	};
+	
+	that.inputField = function(modelArgs, htmlArgs) {
+		if (modelArgs.getValue() && modelArgs.displayName) {
+			var input_field = modelArgs.displayName + ' <input type="text" name="' + 
+				modelArgs.getValue + '"/>';
+				
+			return input_field;
+		}
+		else {
+			throw "Html.inputField: Model is missing displayName or 
+		}
 	};
 	
 	that.textBox = function(args) {
