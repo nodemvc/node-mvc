@@ -1,13 +1,22 @@
 // HTML helper function
 var HTML = (function(spec) {
 	var that = {};
-
+	
+	// Returns the following string:
+	//		<label id="$modelArgs.propertyName">$modelArgs.displayName</label>
+	// Required:
+	// 		modelArgs.displayName
+	// Optional:
+	//		modelArgs.propertyName
 	that.label = function(modelArgs, htmlArgs) {
 		if (modelArgs.displayName) {
 			var label = '<label';
 			
-			if (htmlArgs.id) {
-				label += 'id="' + htmlArgs.id + '">' 
+			if (modelArgs.propertyName) {
+				label += 'id="' + modelArgs.propertyName + '">';
+			} 
+			else {
+				label += '">";
 			}
 		
 			label += modelArgs.displayName + '</label>';
@@ -18,54 +27,72 @@ var HTML = (function(spec) {
 		}
 	}
 	
+	// Returns the following string:
+	//		<input type="submit" value="$modelArgs.displayName>" />
+	// Required:
+	// 		modelArgs.displayName
 	that.submitButton = function(modelArgs, htmlArgs) {
-		if (modelArgs.displayName) {
-			var button = '<input type="submit" value="' + modelArgs.displayName + '"/>';
+		if (modelArgs.displayName && modelArgs.propertyName) {
+			var button = '<input type="submit" value="' + modelArgs.displayName + '" />';
 			return button;
 		} 
 		else {
-			throw "Html.submitButton: missing displaying name for model";
+			throw "Html.submitButton: missing displayName or propertyName for model";
 		}
 	};
 	
-	// Supports all attributes from this link: http://www.w3schools.com/tags/tag_textarea.asp
-	that.textArea = function(args) {
-		
-		return '';
+	// Returns the following string:
+	//		<textarea rows="$htmlArgs.rows" cols="$htmlArgs.cols" name="modelArgs.propertyName">modelArgs.displayName</textarea>
+	// Required:
+	// 		modelArgs.displayName
+	//		modelArgs.propertyName
+	// Optional:
+	//		htmlArgs.rows || 4 (defaults to 4 rows)
+	//		htmlArgs.cols || 40 (defaults to 40 cols) 
+	that.textArea = function(modelArgs, htmlArgs) {
+		if (modelArgs.displayName && modelArgs.propertyName) {
+			var textArea = '<textarea rows="';
+			
+			textArea += htmlArgs.rows ? (htmlArgs.rows + '" col="') : '40" col="';
+			
+			if (htmlArgs.rows) {
+				textArea += htmlArgs.rows + '" col="';
+			}
+			else {
+				textArea += '4" col="';
+			}
+			
+			if (htmlArgs.cols) {
+				textArea += htmlArgs.cols + '" name="';
+			}
+			else {
+				textArea += '40" name="';
+			}
+			
+			textArea += modelArgs.propertyName + '">' + modelArgs.displayName + '</textarea>';
+			return textArea;
+		} 
+		else {
+			throw "Html.textArea: Model is missing displayName or propertName";
+		}
 	};
 	
+	// Returns the following string:
+	//		<input type="submit" value="$modelArgs.displayName>" for="$modelArgs.propertName"/>
+	// Required:
+	// 		modelArgs.displayName
+	//		modelArgs.propertyName	
 	that.inputField = function(modelArgs, htmlArgs) {
-		if (modelArgs.getValue() && modelArgs.displayName) {
+		if (modelArgs.propertyName() && modelArgs.displayName) {
 			var input_field = modelArgs.displayName + ' <input type="text" name="' + 
-				modelArgs.getValue + '"/>';
+				modelArgs.propertyName + '"/>';
 				
 			return input_field;
 		}
 		else {
-			throw "Html.inputField: Model is missing displayName or 
+			throw "Html.inputField: Model is missing displayName or propertyName";
 		}
 	};
-	
-	that.textBox = function(args) {
-		var action = args.action || '';
-		var txtAreaName = args.areaName;
-		var txtBoxCol = args.col || '40';
-		var rowsEnabled = args.rows || 'Y';
-		var initialTxt = args.text || '';
-		//var inputType = args.inputType;
-		var buttonName = args.buttonName || 'Submit';
-				
-		return '<form method=\"post\" action=\"' + action +'\">\n' +
-			'<textarea name=\"' + txtAreaName + '\" cols=\"' + txtBoxCol + '\" rows=\"' + rowsEnabled + '\">\n' +
-			initialTxt + '\n' +
-			'</textarea><br>\n' +
-			that.submitButton(buttonName) + 
-			'</form>\n';
-	};
-	
-	that.test = function() {
-		return 'nothing'
-	}
 	
 	return that;
 })();
