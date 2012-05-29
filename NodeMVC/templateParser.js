@@ -16,6 +16,8 @@ var HTML = require('./HTML.js');
 // whatever that may be.
 var templateParser = (function () {
 	var that = {};
+	
+	//var temp = /<%(=*)\s*([\w_]*)\.*([\w_]*)\s*\(*\s*([\w_]*)\.*([\w_]*),*\s*({*[\w\s:\"\,]*}*)\s*\)*\s*%>/g
 
 	// Parses html document for special markups and grabs those markups requested via 
 	// accessing the html document. The render function assumes that there is only one 
