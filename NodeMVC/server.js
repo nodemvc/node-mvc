@@ -28,7 +28,7 @@ var server = (function () {
 		
 		var method = request.method;
 		var responseSize = 0;	// TODO - how do you get this?
-		if ((method !== "HEAD") && (method !== "GET")) {
+		if ((method !== "HEAD") && (method !== "GET") && (method !== "POST")) {
 			console.log("Unhandled method: " + method); 
 			response.writeHeader(501, {"Content-Type":"text/plain"});
 			response.end();
@@ -54,10 +54,12 @@ var server = (function () {
 		//Route the request
 		try
 		{	
-			var routerResponse = router.handleRequest(request, response, controllers, SID);
-			response.end();
+			
+			var routerResponse = router.handleRequest(request, response, controllers, SID, log);
+			
+			//response.end();
 			// TODO set response size
-			log(request, response, responseSize);
+			//log(request, response, responseSize);
 		}
 		catch(err)
 		{
