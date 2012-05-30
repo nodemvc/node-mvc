@@ -14,16 +14,20 @@ var accounts = function() {
 		var that = model(); // <-- inherit the base model class
 		that.addProperty("username", {displayName: "User name", required: true});
 		that.addProperty("password", {displayName: "Password", required: true, dataType: "password"});
-		that.addProperty("rememberme", {displayName: "Remember Me"});
 		return that;
 	};
 		
 	// developer defines a logon function for this account controller
 	that.logon = function(logonModel) {
 		if (logonModel.clientBound === false) {
-			return that.view();
+			return that.view(logonModel);
 		}
-		return that.redirectToAction("index" , "home");
+		console.log("attempting to validate " + logonModel.username.getValue());
+		if (logonModel.username.getValue() !== "kevin") {
+		    // incorrect user name
+		    return that.view(logonModel);
+		}
+		return that.redirectToAction("info", "userInfo");
 	};
 	
 	// developer assigns the logonModel function object to the logon function
@@ -40,19 +44,20 @@ var userInfo = function() {
 	// developer defines an info model object 
 	var infoModel = function() {
 		var that = model(); // <-- inherit the base model class
-		that.addProperty("username", {displayName: "User name", required: true});
-		that.addProperty("password", {displayName: "Password", required: true, dataType: "password"});
-		that.addProperty("rememberme", {displayName: "Remember Me"});
+		that.addProperty("fname", {displayName: "First Name", required: true});
+		that.addProperty("lname", {displayName: "Last Name", required: true});
+		that.addProperty("email", {displayName: "Email", required: true});
+		that.addProperty("subscribed", {displayName: "Subscribed"});
 		return that;
 	};
 		
 	// developer defines an info function for this userInfo controller
 	that.info = function(infoModel) {
 		if (infoModel.clientBound === false) {
-			return that.view();
+			return that.view(infoModel);
 		};
 		// retrieve model info for the user
-		return that.view();
+		return that.view(infoModel);
 	};
 	
 	// developer assigns the infoModel function object to the infoUpdate function
@@ -63,4 +68,5 @@ var userInfo = function() {
 
 
 server.addController(accounts(), "accounts");
+server.addController(userInfo(), "userInfo");
 server.run(8888);
