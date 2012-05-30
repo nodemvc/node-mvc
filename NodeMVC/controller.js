@@ -1,32 +1,45 @@
 
 // NodeMVC controller module that the developer will use to inherit from.
-var controller = function(spec) {
+var controller = function() {
 		
 	var that = {};
+	that.contentType = "text/html";
 	that.modelObj = null;
 	that.action = null;
 	that.session = null;
 	that.viewData = [];
 	that.request = null;
 	that.response = null;
-	var url = require('url');
+	that.logger = null;
+	that.url = require('url');
+	that.qs = require('querystring');
 		
 	// This is the part that will require the html parser object
 	var parserObj = require("./templateParser");
 	
 	// Testing Stub
-	var viewfuncLogon = function (action, modelObj) { return '<form action=' + '"' + action + '"' + ' method="post">' +
-		modelObj.username.displayName + ': <input type="text" name="username" /><br />' +
-		modelObj.password.displayName + ': <input type="password" name="password" /><br />' +
-			'<input type="submit" value="Submit" /> </form>' };
+	var viewfuncLogon = function (action, modelObj) { 
+		return '<head><title> ' + action + '</title><link href="../Content/SiteCss" rel="stylesheet" type="text/css" />' +
+		'</head><form action=' + '"' + action + '"' + ' method="post">' + '<fieldset>' +
+		'<label for="username">' + modelObj.username.displayName + '</label>' +
+		': <input type="text" name="username" id="username" /><br />' +
+		'<label for="password">' + modelObj.password.displayName + '</label>' +
+		': <input type="password" name="password" id="password" /><br /><br />' + 
+		'<input type="submit" value="' + action + '" />' + '</fieldset></form>' };
 	
     // Testing Stub	
-	var viewfuncInfo = function (action, modelObj) { return '<form action=' + '"' + action + '"' + ' method="get">' +
-		modelObj.fname.displayName + ': <input type="text" name="fname" /><br />' +
-		modelObj.lname.displayName + ': <input type="text" name="lname" /><br />' +
-		modelObj.email.displayName + ': <input type="email" name="email" /><br />' +
-		modelObj.subscribed.displayName + ': <input type="checkbox" name="subscribed" /><br />' +
-			'<input type="submit" value="Submit" /> </form>' };
+	var viewfuncInfo = function (action, modelObj) { 
+		return '<head><title> ' + action + '</title><link href="../Content/SiteCss" rel="stylesheet" type="text/css" />' +
+		'</head><form action=' + '"' + action + '"' + ' method="post">' + '<fieldset>' +
+		'<label for="fname">' + modelObj.fname.displayName + '</label>' +
+		': <input type="text" name="fname" id="fname" value="' + modelObj.fname.getValue() + '" /><br />' +
+		'<label for="lname">' + modelObj.lname.displayName + '</label>' +
+		': <input type="text" name="lname" id="lname" value="' + modelObj.lname.getValue() + '" /><br />' +
+		'<label for="email">' + modelObj.email.displayName + '</label>' +
+		': <input type="email" name="email" id="email" value="' + modelObj.email.getValue() + '" /><br />' +
+		'<label for="subscribed">' + modelObj.subscribed.displayName + '</label>' +
+		': <input type="checkbox" name="subscribed" id="subscribed" /><br />' +
+		'<input type="submit" value="' + 'update' + '" />' + '</fieldset></form>' };
 			  
 	// this is the gerenal function that gets called by the router
 	// the action param is the name (string) of the function to execute
@@ -36,38 +49,34 @@ var controller = function(spec) {
 		that.response = response;
 		that.action = action;
 		that.session = sid;
+		that.logger = logger;
 		
 		var controllerActionForGet = function() {
 		
 		try {
-			// See if a model has been defined for the action
-			if (typeof that[action].model === "function") {
+				// See if a model has been defined for the action
+				if (typeof that[action].model === "function") {
 				
-				// create the model object to be passed to the action as a parameter
-				// attempt to bind any client url parameters to the model
-				// call the action on the controller passing in the model
-				var modelParam = that[action].model();
-				modelParam.bindModel(url.parse(request.url, true).query);
-				that[action](modelParam);
+					// create the model object to be passed to the action as a parameter
+					var modelParam = that[action].model();
+					// attempt to bind any client url parameters to the model
+					modelParam.bindModel(that.url.parse(request.url, true).query);
+					// call the action on the controller passing in the model
+					that[action](modelParam);
 				
-			} else {
+				} else {
 			
-				// call the action, this leaves the response to be handled to the controller function
-				that[action]();
+					// call the action, this leaves the response to be handled to the controller function
+					that[action]();
+				}
+			} catch (e) {
+				throw e;
 			}
-		} catch (e) {
-			throw e;
 		}
 		
-		logger(that.request, that.response, 0);
-		that.response.end();
-		
-		}
-		
+		// the only difference in this method is the way the clientParams are extracted
 		var controllerActionForPost = function() {
 		
-		    // the only difference in this method is the way the clientParams are extracted
-		    var qs = require('querystring');
             var body = '';
 			
             request.on('data', function (data) {
@@ -75,32 +84,26 @@ var controller = function(spec) {
             });
 			
             request.on('end', function () {
-
-               var post = qs.parse(body);
+       
                try {
-					console.log(action)
 			        // See if a model has been defined for the action
 			        if (typeof that[action].model === "function") {
 					
-				    // create the model object to be passed to the action as a parameter
-				    // attempt to bind any client url parameters to the model
-				    // call the action on the controller passing in the model
-				    var modelParam = that[action].model();
-				    modelParam.bindModel(post);
-				    that[action](modelParam);
+						// create the model object to be passed to the action as a parameter
+						var modelParam = that[action].model();
+						// attempt to bind any client body post parameters to the model
+						modelParam.bindModel(that.qs.parse(body));
+						// call the action on the controller passing in the model
+						that[action](modelParam);
 				
-			        } else {
+					} else {
 			
 				        // call the action, this leaves the response to be handled to the controller function
 				        that[action]();
-			        }
+					}
 		        } catch (e) {
 			        throw e;
 		        }
-				
-				logger(request, response, 0);
-				response.end();
-				
             });
 			
 		}
@@ -115,39 +118,43 @@ var controller = function(spec) {
 
 	};
 	
-	// the developer invokes this function at the end of a function in a controller --> return that.view();
+	// handles ending the response and is only called by ultimately 
+	var endResponse = function(viewContent) {
+			
+			if (viewContent === 302) {
+				return 302;
+			}
+			that.response.setHeader("Content-Type", that.contentType);
+			that.response.write(viewContent);
+			that.response.statusCode = 200;
+			that.logger(that.request, that.response, 0);
+			that.response.end();
+		};
+	
+	// A developer can invoke this function inside a controller function --> return that.view();
+	// This function will return the content to be put into the body of a response
 	var view = function () {
 	
 		try {
-			// action & sid are pulled from 'handleReq' 
-			//var action = arguments.callee.caller.caller.arguments[2];
-			//var sid = arguments.callee.caller.caller.arguments[3];
-			// a model or other params are fuller from the developer defined function
-			//var modelObj = arguments.callee.caller.arguments[0];
-			if (arguments.length > 0) {
-				var modelObj = arguments[0];
-			}			
-			// TODO: This is only for testing...
-			console.log(that.session + " attempting to call view file " + that.action)
+			if (typeof arguments[1] === 'string') endResponse(arguments[0]);
+			// call developer defined view - currently calling a stub for testing arguments[0]
+			// is assumed to be a model, but if undefined then this should not affect the parser
+			if (that.action === "logon") endResponse(viewfuncLogon(that.action, arguments[0], that.viewData));
+			if (that.action === "info") return endResponse(viewfuncInfo(that.action, arguments[0], that.viewData));
+			//endResponse(parserObj.render(action, arguments[0], that.viewData));
 		} catch (e) { 
 			throw e; 
 		}
-
-		var content = null;
-		// call developer defined view - currently calling a stub for testing
-		if (that.action === "logon") content = viewfuncLogon(that.action, modelObj, that.viewData);
-		if (that.action === "info") content = viewfuncInfo(that.action, modelObj, that.viewData);
-		//content = parserObj.render(action, modelObj, that.viewData);
-		that.response.setHeader("Content-Type", "text/html");
-		that.response.write(content);
-		that.response.statusCode = 200;
 	};
 	
+	// redirect currently passes 302, but this can actually be passed
+	// back to the router and then the router could reroute the request
 	var redirectToAction = function(action, controller) {
 		
 		that.response.writeHead(302, {"Location": "/" + controller + "/" + action});
 		that.response.statusCode = 302;
 		that.response.end();
+		return 302;
 	};
 	
 	that.view = view;
