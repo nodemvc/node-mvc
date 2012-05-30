@@ -45,8 +45,11 @@ var userInfo = function() {
 	var infoModel = function() {
 		var that = model(); // <-- inherit the base model class
 		that.addProperty("fname", {displayName: "First Name", required: true});
+		that.fname.setValue("James");
 		that.addProperty("lname", {displayName: "Last Name", required: true});
-		that.addProperty("email", {displayName: "Email", required: true});
+		that.lname.setValue("Kline");
+		that.addProperty("email", {displayName: "Email Address", required: true});
+		that.email.setValue("JamesKline@gmail.com");
 		that.addProperty("subscribed", {displayName: "Subscribed"});
 		return that;
 	};
@@ -66,7 +69,27 @@ var userInfo = function() {
 	return that;
 };
 
+// here is an example of a developer defined controller with the use of a model.
+var Content = function() {
+		
+	var that = controller(); // <-- inherit the base controller class
+	
+	// developer defines an info function for this userInfo controller
+	that.SiteCss = function() {
+		
+		var fs = require('fs');
+		fs.readFile('./Site.css', function (err, data) {
+			if (err) throw err;
+			that.response.setHeader('Expires', '-1');
+			that.response.setHeader('Content-Type', 'css');
+			return that.view(data,'');
+		});
+	};
+		
+	return that;
+};
 
 server.addController(accounts(), "accounts");
 server.addController(userInfo(), "userInfo");
+server.addController(Content(), "Content");
 server.run(8888);
