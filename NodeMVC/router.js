@@ -33,7 +33,7 @@ map({
 });
 
 //TODO have not implemented serveral controller
-exports.handleRequest = function(request,response,controllers,SID){
+exports.handleRequest = function(request,response,controllers,SID,logger){
 	
     var r = {controller:null, action:null, args:null};
     var method = request.method ? request.method.toLowerCase() : 'get';
@@ -74,6 +74,6 @@ exports.handleRequest = function(request,response,controllers,SID){
 			return 0;
 		}
 	}
-	controllers[r.controller].handleRequest(request,response,r.action,SID);
+	controllers[r.controller].handleRequest(request,response,r.action,SID,logger);
 	
 };
