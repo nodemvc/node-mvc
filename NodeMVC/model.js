@@ -4,12 +4,17 @@ var model = function (spec) {
 	
 	var that = {};
 	that.clientBound = false;
+
+	// attempts to bind any client parameters to the model properties - expecting object with keys
+	var bindModel = function (clientParams) {
 	
-	// expecting 'url.parse(request.url, true).query' url
-	var bindModel = function (query) {
-		for(indx in query) {
+		// set the clientBound flag to indicate that the model could be bound with data from the client
+		that.clientBound = Object.keys(clientParams).length > 0 ? true : false;
+		
+		for(indx in clientParams) {
 			if (that.hasOwnProperty(indx) && typeof that[indx].setValue === "function") { 
-				that[indx].setValue(query[indx]); 
+				// set the value of the model property 
+				that[indx].setValue(clientParams[indx]);
 			} else {
 				throw new Error(indx + " could not be mapped to a member of the model");
 			}
