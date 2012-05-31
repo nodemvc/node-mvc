@@ -18,16 +18,16 @@ var accounts = function() {
 	};
 		
 	// developer defines a logon function for this account controller
-	that.logon = function(logonModel) {
-		if (logonModel.clientBound === false) {
-			return that.view(logonModel);
+	that.logon = function(args) {
+		if (args.model.clientBound === false) {
+			return that.view(args);
 		}
-		console.log("attempting to validate " + logonModel.username.getValue());
-		if (logonModel.username.getValue() !== "kevin") {
+		console.log("attempting to validate " + args.model.username.getValue());
+		if (args.model.username.getValue() !== "james") {
 		    // incorrect user name
-		    return that.view(logonModel);
+		    return that.view(args);
 		}
-		return that.redirectToAction("info", "userInfo");
+		return that.redirectToAction(args, "info", "userInfo");
 	};
 	
 	// developer assigns the logonModel function object to the logon function
@@ -55,12 +55,12 @@ var userInfo = function() {
 	};
 		
 	// developer defines an info function for this userInfo controller
-	that.info = function(infoModel) {
-		if (infoModel.clientBound === false) {
-			return that.view(infoModel);
+	that.info = function(args) {
+		if (args.model.clientBound === false) {
+			return that.view(args);
 		};
 		// retrieve model info for the user
-		return that.view(infoModel);
+		return that.view(args);
 	};
 	
 	// developer assigns the infoModel function object to the infoUpdate function
@@ -75,14 +75,14 @@ var Content = function() {
 	var that = controller(); // <-- inherit the base controller class
 	
 	// developer defines an info function for this userInfo controller
-	that.SiteCss = function() {
+	that.SiteCss = function(args) {
 		
 		var fs = require('fs');
 		fs.readFile('./Site.css', function (err, data) {
 			if (err) throw err;
-			that.response.setHeader('Expires', '-1');
-			that.response.setHeader('Content-Type', 'css');
-			return that.view(data,'');
+			args.response.setHeader('Expires', '-1');
+			args.response.setHeader('Content-Type', 'css');
+			return that.view(args, data);
 		});
 	};
 		
