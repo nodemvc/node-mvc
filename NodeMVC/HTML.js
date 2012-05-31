@@ -97,20 +97,20 @@ var HTML = (function(spec) {
 	// throws exception if a required attribute(s) is missing
 	//
 	that.checkBox = function(modelArgs, htmlArgs) {
+
 		var ckbxStr = "<input type='checkbox'";
 		
 		// Required attributes
-		console.log('1');
 		var name = modelArgs.propertyName;
 		if (name === null) {
 			throw "checkBox missing required attribute 'name'";
 		}
-		console.log('2');
 		ckbxStr = ckbxStr + " name=\'" + name + "\'";
-console.log('3');
-		var isChecked = modelArgs.getValue() ? "yes" : "no";
-		console.log('4');
-		ckbxStr = ckbxStr + " value=\'" + isChecked + "\'" + " checked=\'" + isChecked + "\'" + " />\n";
+		ckbxStr = ckbxStr + " value=\'" + 'yes' + "\'";
+		ckbxStr = modelArgs.getValue() === "yes" ? ckbxStr + " checked=\'yes\'" + " />\n" :  ckbxStr + " />\n"
+		// apply hidden input field so that when the checkbox is
+		// unchecked, it can be picked up in the post body arguments
+		ckbxStr = ckbxStr + that.hidden(modelArgs, htmlArgs);
 		return ckbxStr;
 	};
 
@@ -122,16 +122,15 @@ console.log('3');
 	// throws exception if a required attribute(s) is missing
 	//
 	that.hidden = function(modelArgs, htmlArgs) {
-		var htmlStr = "<input type=\'" + "hidden";
+		
+		var htmlStr = "<input type=\'" + "hidden" + "\'";
 		// Required attributes
 		var name = modelArgs.propertyName;
 		if (name === null) {
 			throw "hidden missing required attribute 'name'";
 		}
-		htmlStr = htmlStr + " name=\'" + name + "\'";
-		
-		var value = modelArgs.getValue() ? "yes" : "no";
-		htmlStr = htmlStr + " value=\'" + value + "\'/>\n";
+		htmlStr = htmlStr + " name=\'" + name +  "\'";
+		htmlStr = htmlStr + " value=\'no\'/>\n";
 		return htmlStr;
 	};
 	
