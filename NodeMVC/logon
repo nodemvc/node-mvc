@@ -1,0 +1,27 @@
+<!---<head>
+    <title> action</title>
+    <link href="../Content/SiteCss" rel="stylesheet" type="text/css" />
+</head>
+<form action="info" method="post">
+    <fieldset>
+        <label for="username">modelObj.username.displayName</label>: <input type="text" name="username" id="username" /><br />
+        <label for="password">modelObj.password.displayName</label>: <input type="password" name="password" id="password" /><br />
+        <br />
+        <input type="submit" value="action" />
+    </fieldset>
+</form> -->
+
+<head>
+    <title> action</title>
+    <link href="../Content/SiteCss" rel="stylesheet" type="text/css" />
+</head>
+<%= html.beginForm(model.action, {"method":"post","action":"info"}) %>
+    <%= html.beginFieldSet() %>
+        <%= html.label(model.username) %>: <%= html.inputField(model.username, {"type":"text"}) %> <br/>
+        <%= html.label(model.password) %>: <%= html.inputField(model.password, {"type":"password"}) %> <br/>
+        <br/>
+        <%= html.submitButton() %>
+    <%= html.endFieldSet() %>
+<%= html.endForm() %>
+
+

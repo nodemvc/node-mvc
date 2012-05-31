@@ -1,6 +1,14 @@
 // HTML helper function
 var HTML = (function(spec) {
 	var that = {};
+	
+	that.beginFieldSet = function(modelArgs, htmlArgs) {
+		return '<fieldset>';	
+	};
+	
+	that.endFieldSet = function(modelArgs, htmlArgs) {
+		return '</fieldset>';	
+	};
 
 	//
 	// Supports all required and optional attributes from this link:  http://www.w3schools.com/tags/tag_form.asp
@@ -13,7 +21,8 @@ var HTML = (function(spec) {
 		
 		// Required attributes
 		var action = htmlArgs["action"];
-		if (action === null) {
+		console.log('form action = "' + action + '"');
+		if (!action) {
 			throw "form tag missing required attribute 'action'";
 		}
 
@@ -21,32 +30,32 @@ var HTML = (function(spec) {
 
 		// Optional attributes	
 		var accept = htmlArgs["accept"];
-		if (accept !== null) {
+		if (accept) {
 			formStr = formStr +  " accept=\'" + accept + "\'";
 		}
 		
 		var acceptCharset = htmlArgs["accept-charset"];
-		if (acceptCharset !== null) {
+		if (acceptCharset) {
 			formStr = formStr +  " accept-charset=\'" + acceptCharset + "\'";
 		}
 
 		var enctype = htmlArgs["enctype"];
-		if (enctype !== null) {
+		if (enctype) {
 			formStr = formStr +  " enctype=\'" + enctype + "\'";
 		}
 
 		var method = htmlArgs["method"];
-		if(method !== null) {
+		if(method) {
 			formStr = formStr +  " method=\'" + method + "\'";
 		}
 
 		var name = htmlArgs["name"];
-		if (name !== null) {
+		if (name) {
 			formStr = formStr +  " name=\'" + name + "\'";
 		}
 
 		var target = htmlArgs["target"];
-		if(target !== null) {
+		if(target) {
 			formStr = formStr +  " target=\'" + target + "\'";
 		}		
 		// Standard attributes - not implemented
@@ -66,7 +75,7 @@ var HTML = (function(spec) {
 			var label = '<label';
 			
 			if (modelArgs.propertyName) {
-				label += ' id="' + modelArgs.propertyName + '">';
+				label += ' for="' + modelArgs.propertyName + '" id="' + modelArgs.propertyName + '">';
 			} 
 			else {
 				label += '">"';
@@ -88,17 +97,19 @@ var HTML = (function(spec) {
 	// throws exception if a required attribute(s) is missing
 	//
 	that.checkBox = function(modelArgs, htmlArgs) {
-		var ckbxStr = "<input type=\'" + "checkbox";
+		var ckbxStr = "<input type='checkbox'";
 		
 		// Required attributes
+		console.log('1');
 		var name = modelArgs.propertyName;
 		if (name === null) {
 			throw "checkBox missing required attribute 'name'";
 		}
-		
+		console.log('2');
 		ckbxStr = ckbxStr + " name=\'" + name + "\'";
-
+console.log('3');
 		var isChecked = modelArgs.getValue() ? "yes" : "no";
+		console.log('4');
 		ckbxStr = ckbxStr + " value=\'" + isChecked + "\'" + " checked=\'" + isChecked + "\'" + " />\n";
 		return ckbxStr;
 	};
@@ -146,17 +157,12 @@ var HTML = (function(spec) {
 	};
 	
 	// Returns the following string:
-	//		<input type="submit" value="$modelArgs.displayName>" />
+	//		<input type="submit" value="Submit"> />
 	// Required:
-	// 		modelArgs.displayName
+	// 		None
 	that.submitButton = function(modelArgs, htmlArgs) {
-		if (modelArgs.displayName && modelArgs.propertyName) {
-			var button = '<input type="submit" value="' + modelArgs.displayName + '" />';
-			return button;
-		} 
-		else {
-			throw "Html.submitButton: missing displayName or propertyName for model";
-		}
+		var button = '<input type="submit" value="Submit" />';
+		return button;
 	};
 
 	// Returns the following string:
@@ -195,15 +201,26 @@ var HTML = (function(spec) {
 	};
 
 	// Returns the following string:
-	//		<input type="submit" value="$modelArgs.displayName>" for="$modelArgs.propertName"/>
+	//		<input type="submit" value="$modelArgs.displayName>" for="$modelArgsds.propertName"/>
 	// Required:
 	// 		modelArgs.displayName
-	//		modelArgs.propertyName	
+	//		modelArgs.propertyName
+	// Optional:
+	//		modelArgs.getValue() -- Displays getValue() in the input field	
 	that.inputField = function(modelArgs, htmlArgs) {
 		if (modelArgs.propertyName && modelArgs.displayName) {
-			var input_field = modelArgs.displayName + 
-				' <input type="text" name="' + modelArgs.propertyName + '"/>';
-				
+			var input_field = '<input name="' + modelArgs.propertyName + '" id="' + modelArgs.propertyName + '" ';
+			
+			if (modelArgs.getValue()) {
+				input_field += 'value="' + modelArgs.getValue() + '" ';
+			}
+			
+			if (htmlArgs.type) {
+				input_field += 'type="' + htmlArgs.type + '" ';
+			}
+			
+			input_field += '/>';
+			
 			return input_field;
 		}
 		else {

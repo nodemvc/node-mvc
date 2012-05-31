@@ -27,6 +27,7 @@ var accounts = function() {
 		    // incorrect user name
 		    return that.view(args);
 		}
+		console.log('redirecting');
 		return that.redirectToAction(args, "info", "userInfo");
 	};
 	
@@ -50,7 +51,12 @@ var userInfo = function() {
 		that.lname.setValue("Kline");
 		that.addProperty("email", {displayName: "Email Address", required: true});
 		that.email.setValue("JamesKline@gmail.com");
+		
 		that.addProperty("subscribed", {displayName: "Subscribed"});
+		
+		that.addProperty('action', {displayName:'Action Redirection'});
+		that.action.setValue('info');
+		
 		return that;
 	};
 		

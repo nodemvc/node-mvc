@@ -1,0 +1,27 @@
+<!--<head>
+    <title> action</title>
+    <link href="../Content/SiteCss" rel="stylesheet" type="text/css" />
+</head>
+<form action="action" method="post">
+    <fieldset>
+        <label for="fname">modelObj.fname.displayName</label>: <input type="text" name="fname" id="fname" value="modelObj.fname.getValue()" /><br />
+        <label for="lname">modelObj.lname.displayName</label>: <input type="text" name="lname" id="lname" value="modelObj.lname.getValue()" /><br />
+        <label for="email">modelObj.email.displayName</label>: <input type="email" name="email" id="email" value="modelObj.email.getValue()" /><br />
+        <label for="subscribed">modelObj.subscribed.displayName</label>: <input type="checkbox" name="subscribed" id="subscribed" /><br />
+        <input type="submit" value="update" />
+    </fieldset>
+</form> -->
+
+<head>
+    <title> action</title>
+    <link href="../Content/SiteCss" rel="stylesheet" type="text/css" />
+</head>
+<%= html.beginForm(model.action, {"method":"post"}) %>
+    <%= html.beginFieldSet() %>
+        <%= html.label(model.fname) %>: <%= html.inputField(model.fname , {"type":"text"}) %> <br/>
+        <%= html.label(model.lname) %>: <%= html.inputField(model.lname	, {"type":"text"}) %> <br/>
+        <%= html.label(model.email) %>: <%= html.inputField(model.email , {"type":"email"}) %> <br/>
+        <%= html.label(model.subscribed) %>: <%= html.checkBox(model.subscribed) %> <br/>
+        <%= html.submitButton() %>
+    <%= html.endFieldSet() %>
+<%= html.endForm() %>

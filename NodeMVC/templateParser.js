@@ -62,6 +62,9 @@ var templateParser = (function () {
 		var debug_on = null;
 
 		try {
+			console.log('TemplateParser: Reading ' + action);
+			
+
 			var content = fs.readFileSync(action, 'ascii');
 			var newHTMLContent = content;
 						
@@ -83,7 +86,7 @@ var templateParser = (function () {
 			//		<%= HTML.textArea( model.object, { "rows":"4",
 			//										   "cols":"40"} %>
 			//
-			var pattern = /<%(=*)\s*([\w_]*)\.*([\w_]*)\s*\(*\s*([\w_]*)\.*([\w_]*),*\s*({*[\w\s:\"\,]*}*)\s*\)*\s*%>/g
+			var pattern = /<%(=*)\s*([\w_]*)\.*([\w_]*)\s*\(*\s*([\w_]*)\.*([\w_]*)\s*,*\s*({*[\w\s:\"\,]*}*)\s*\)*\s*%>/g
 	
 			var result = pattern.exec(content);
 			if (result) {
@@ -120,13 +123,11 @@ var templateParser = (function () {
 							console.log('converting to JSON: ' + result[OPTIONAL_JSON_INPUT]);
 							jsonObject = JSON.parse(result[OPTIONAL_JSON_INPUT]);
 						}
-						// always pass in the action as an optional HTML argument
-						jsonObject.action = action;
+						jsonObject.action = action ;
 						
 						var htmlHelperReturnValue = null;
 						
 						if (modelProperty) {
-							console.log('templateParser112: model property: ' + model[modelProperty]);
 							htmlHelperReturnValue = HTML[helperFunctionName]( model[modelProperty], jsonObject ); 
 						}
 						else {
@@ -174,9 +175,11 @@ var templateParser = (function () {
 			return newHTMLContent;
 		}
 		catch (err) {
+			
 			console.log("Error Parsing HTML template:\n" + err);
 			// logs error and throws error back to the controller
-			throw err;
+			//throw err;
+			return "Error Parsing HTML template:\n" ;
 		}
 	}
 	return that;
