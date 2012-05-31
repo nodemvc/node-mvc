@@ -14,15 +14,15 @@ var accounts = function() {
 		
 	// developer defines a logon function for this account controller
 	that.logon = function(args) {
-		if (args.model.clientBound === false) {
-			return that.view(args);
+	
+		if ( args.model.clientBound === true && 
+			 args.model.username.getValue() === "james" && 
+			 args.model.password.getValue() === "change") {
+			 return that.redirectToAction(args, "info", "userInfo");
 		}
-		console.log("attempting to validate " + args.model.username.getValue());
-		if (args.model.username.getValue() !== "james") {
-		    // incorrect user name
-		    return that.view(args);
-		}
-		return that.redirectToAction(args, "info", "userInfo");
+		
+		// will render the logon template
+		return that.view(args);
 	};
 	
 	// developer assigns the logonModel function object to the logon function
