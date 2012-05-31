@@ -27,7 +27,6 @@ var accounts = function() {
 		    // incorrect user name
 		    return that.view(args);
 		}
-		console.log('redirecting');
 		return that.redirectToAction(args, "info", "userInfo");
 	};
 	
@@ -51,12 +50,7 @@ var userInfo = function() {
 		that.lname.setValue("Kline");
 		that.addProperty("email", {displayName: "Email Address", required: true});
 		that.email.setValue("JamesKline@gmail.com");
-		
-		that.addProperty("subscribed", {displayName: "Subscribed"});
-		
-		that.addProperty('action', {displayName:'Action Redirection'});
-		that.action.setValue('info');
-		
+		that.addProperty("subscribed", "no", {displayName: "Subscribed"});
 		return that;
 	};
 		
@@ -65,6 +59,7 @@ var userInfo = function() {
 		if (args.model.clientBound === false) {
 			return that.view(args);
 		};
+		
 		// retrieve model info for the user
 		return that.view(args);
 	};
