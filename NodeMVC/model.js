@@ -13,8 +13,17 @@ var model = function (spec) {
 		
 		for(indx in clientParams) {
 			if (that.hasOwnProperty(indx) && typeof that[indx].setValue === "function") { 
-				// set the value of the model property 
-				that[indx].setValue(clientParams[indx]);
+			
+				// if the param is represented as an object, its probably an array, take the fist value
+				// this occurs with the checkbox checked implementation. A common way to get the checked
+				// value is to have a hidden field and the hidden field value is posted when the checkbox is not checked
+				if (typeof clientParams[indx] === 'object') {
+					// set the value of the model property 
+					that[indx].setValue(clientParams[indx][0]);
+				} else {
+					// set the value of the model property 
+					that[indx].setValue(clientParams[indx]);
+				}
 			} else {
 				throw new Error(indx + " could not be mapped to a member of the model");
 			}
@@ -37,8 +46,16 @@ var model = function (spec) {
 		// property attributes are defined as the second parameter
 		// common attributes include; displayName, required, dataType
 		// these attributes can be used by the html helpers in the view 
-		if ( arguments.length > 1 ) {
+		if ( arguments.length === 2 ) {
 			that[arguments[0]] = arguments[1];
+		}
+		
+		// property attributes are defined as the third parameter
+		// common attributes include; displayName, required, dataType
+		// these attributes can be used by the html helpers in the view 
+		if ( arguments.length === 3 ) {
+			value = arguments[1];
+			that[arguments[0]] = arguments[2];
 		}
 		
 		// give the property a propertyName property
