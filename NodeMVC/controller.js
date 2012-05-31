@@ -112,9 +112,7 @@ var controller = function() {
 	
 	// handles ending the response and is only called by ultimately 
 	var endResponse = function(viewContent, request, response, logger) {
-			if (viewContent === 302) {
-				return 302;
-			}
+			
 			response.write(viewContent);
 			response.statusCode = 200;
 			logger(request, response, 0);
@@ -137,11 +135,18 @@ var controller = function() {
 			,viewData = arguments[0].viewData;
 
 			// if a second argument is defined then write this data to the body and do not call the parser
-			if (typeof arguments[1] !== 'undefined') endResponse(arguments[1], request, response, logger);
-			if (action === "logon") endResponse(viewfuncLogon(action, model, viewData), request, response, logger);
-			if (action === "info") return endResponse(viewfuncInfo(action, model, viewData), request, response, logger);
-			// call the parser for the specified action passing in the action, model, and viewData args
-			//endResponse(that.parserObj.render(action, model, viewData), request, response, logger);
+			if (typeof arguments[1] !== 'undefined') {
+				endResponse(arguments[1], request, response, logger);
+			} else {
+			
+				// The stub calls below were for testing without the parser
+				//if (action === "logon") endResponse(viewfuncLogon(action, model, viewData), request, response, logger);
+				//if (action === "info") return endResponse(viewfuncInfo(action, model, viewData), request, response, logger);
+			
+				// call the parser for the specified action passing in the action, model, and viewData args
+				endResponse(that.parserObj.render(action, model, viewData), request, response, logger);
+			}
+			
 		} catch (e) { 
 			throw e; 
 		}
@@ -154,7 +159,8 @@ var controller = function() {
 		args.response.writeHead(302, {"Location": "/" + controller + "/" + action});
 		args.response.statusCode = 302;
 		args.response.end();
-		return 302;
+		// this can be what is passed back to the router to riderect instead of seding the client a 302
+		return {redirect: {controller: controller, action: action} };
 	};
 	
 	that.view = view;
