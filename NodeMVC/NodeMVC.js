@@ -1,17 +1,12 @@
-// This starts the server and allows us to wire the other modules together
-
-var controller = require("./controller");
-var server = require("./server");
-var model = require("./model");
 
 // here is an example of a developer defined controller with the use of a model.
 var accounts = function() {
 		
-	var that = controller(); // <-- inherit the base controller class
+	var that = require("./controller")(); // <-- inherit the base controller class
 		
 	// developer defines an account model object 
 	var logonModel = function() {
-		var that = model(); // <-- inherit the base model class
+		var that = require("./model")(); // <-- inherit the base model class
 		that.addProperty("username", {displayName: "User name", required: true});
 		that.addProperty("password", {displayName: "Password", required: true, dataType: "password"});
 		return that;
@@ -39,11 +34,11 @@ var accounts = function() {
 // here is an example of a developer defined controller with the use of a model.
 var userInfo = function() {
 		
-	var that = controller(); // <-- inherit the base controller class
+	var that = require("./controller")(); // <-- inherit the base controller class
 		
 	// developer defines an info model object 
 	var infoModel = function() {
-		var that = model(); // <-- inherit the base model class
+		var that = require("./model")(); // <-- inherit the base model class
 		that.addProperty("fname", {displayName: "First Name", required: true});
 		that.fname.setValue("James");
 		that.addProperty("lname", {displayName: "Last Name", required: true});
@@ -73,7 +68,7 @@ var userInfo = function() {
 // here is an example of a developer defined controller with the use of a model.
 var Content = function() {
 		
-	var that = controller(); // <-- inherit the base controller class
+	var that = require("./controller")(); // <-- inherit the base controller class
 	
 	// developer defines an info function for this userInfo controller
 	that.SiteCss = function(args) {
@@ -90,6 +85,8 @@ var Content = function() {
 	return that;
 };
 
+// Get the server module, add the controllers, and run the server to listen on a specified port #
+var server = require("./server");
 server.addController(accounts(), "accounts");
 server.addController(userInfo(), "userInfo");
 server.addController(Content(), "Content");
