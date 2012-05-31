@@ -3,19 +3,9 @@
 var controller = function() {
 		
 	var that = {};
-	that.contentType = "text/html";
-	that.modelObj = null;
-	that.action = null;
-	that.session = null;
-	that.viewData = [];
-	that.request = null;
-	that.response = null;
-	that.logger = null;
 	that.url = require('url');
 	that.qs = require('querystring');
-		
-	// This is the part that will require the html parser object
-	var parserObj = require("./templateParser");
+	that.parserObj = require("./templateParser");
 	
 	// Testing Stub
 	var viewfuncLogon = function (action, modelObj) { 
@@ -43,13 +33,15 @@ var controller = function() {
 			  
 	// this is the gerenal function that gets called by the router
 	// the action param is the name (string) of the function to execute
-	var handleReq = function(request, response, action, sid, logger) {
+	var handleReq = function(request, response, action, session, logger) {
+
+		// by default the content requested will be text/html, but the developer can specify otherwise
+		response.setHeader("Content-Type", "text/html");
 	
-		that.request = request;
-		that.response = response;
-		that.action = action;
-		that.session = sid;
-		that.logger = logger;
+		// server args are passed into the controller action and are accessible by the view
+		// function. They cannot be set as global vars because an action can run async code
+		var serverArgs = { model: null, request:request, response:response, 
+		action:action, session:session, logger:logger, viewData:[] };
 		
 		var controllerActionForGet = function() {
 		
@@ -58,16 +50,16 @@ var controller = function() {
 				if (typeof that[action].model === "function") {
 				
 					// create the model object to be passed to the action as a parameter
-					var modelParam = that[action].model();
+					serverArgs.model = that[action].model();
 					// attempt to bind any client url parameters to the model
-					modelParam.bindModel(that.url.parse(request.url, true).query);
+					serverArgs.model.bindModel(that.url.parse(request.url, true).query);
 					// call the action on the controller passing in the model
-					that[action](modelParam);
+					that[action](serverArgs);
 				
 				} else {
 			
 					// call the action, this leaves the response to be handled to the controller function
-					that[action]();
+					that[action](serverArgs);
 				}
 			} catch (e) {
 				throw e;
@@ -90,16 +82,16 @@ var controller = function() {
 			        if (typeof that[action].model === "function") {
 					
 						// create the model object to be passed to the action as a parameter
-						var modelParam = that[action].model();
+						serverArgs.model = that[action].model();
 						// attempt to bind any client body post parameters to the model
-						modelParam.bindModel(that.qs.parse(body));
+						serverArgs.model.bindModel(that.qs.parse(body));
 						// call the action on the controller passing in the model
-						that[action](modelParam);
+						that[action](serverArgs);
 				
 					} else {
 			
 				        // call the action, this leaves the response to be handled to the controller function
-				        that[action]();
+				        that[action](serverArgs);
 					}
 		        } catch (e) {
 			        throw e;
@@ -108,27 +100,25 @@ var controller = function() {
 			
 		}
 		
-		if (that.request.method == 'POST') {
+		if (request.method == 'POST') {
 		    controllerActionForPost();
 		}
 		
-		if (that.request.method == 'GET') {
+		if (request.method == 'GET') {
 			controllerActionForGet();
 		}		
 
 	};
 	
 	// handles ending the response and is only called by ultimately 
-	var endResponse = function(viewContent) {
-			
+	var endResponse = function(viewContent, request, response, logger) {
 			if (viewContent === 302) {
 				return 302;
 			}
-			that.response.setHeader("Content-Type", that.contentType);
-			that.response.write(viewContent);
-			that.response.statusCode = 200;
-			that.logger(that.request, that.response, 0);
-			that.response.end();
+			response.write(viewContent);
+			response.statusCode = 200;
+			logger(request, response, 0);
+			response.end();
 		};
 	
 	// A developer can invoke this function inside a controller function --> return that.view();
@@ -136,12 +126,22 @@ var controller = function() {
 	var view = function () {
 	
 		try {
-			if (typeof arguments[1] === 'string') endResponse(arguments[0]);
-			// call developer defined view - currently calling a stub for testing arguments[0]
-			// is assumed to be a model, but if undefined then this should not affect the parser
-			if (that.action === "logon") endResponse(viewfuncLogon(that.action, arguments[0], that.viewData));
-			if (that.action === "info") return endResponse(viewfuncInfo(that.action, arguments[0], that.viewData));
-			//endResponse(parserObj.render(action, arguments[0], that.viewData));
+			
+			// extract arguments that were passed into the action
+			var model = arguments[0].model
+			,request = arguments[0].request
+			,response = arguments[0].response
+			,action = arguments[0].action
+			,session = arguments[0].session
+			,logger = arguments[0].logger
+			,viewData = arguments[0].viewData;
+
+			// if a second argument is defined then write this data to the body and do not call the parser
+			if (typeof arguments[1] !== 'undefined') endResponse(arguments[1], request, response, logger);
+			if (action === "logon") endResponse(viewfuncLogon(action, model, viewData), request, response, logger);
+			if (action === "info") return endResponse(viewfuncInfo(action, model, viewData), request, response, logger);
+			// call the parser for the specified action passing in the action, model, and viewData args
+			//endResponse(that.parserObj.render(action, model, viewData), request, response, logger);
 		} catch (e) { 
 			throw e; 
 		}
@@ -149,11 +149,11 @@ var controller = function() {
 	
 	// redirect currently passes 302, but this can actually be passed
 	// back to the router and then the router could reroute the request
-	var redirectToAction = function(action, controller) {
+	var redirectToAction = function(args, action, controller) {
 		
-		that.response.writeHead(302, {"Location": "/" + controller + "/" + action});
-		that.response.statusCode = 302;
-		that.response.end();
+		args.response.writeHead(302, {"Location": "/" + controller + "/" + action});
+		args.response.statusCode = 302;
+		args.response.end();
 		return 302;
 	};
 	
